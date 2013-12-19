@@ -1,8 +1,26 @@
 <html>
 <head>
-<title>
-</title>
+<title>WebGL Deferred Shading</title>
 </head>
 <body>
+<link rel="stylesheet" href="index.css" type="text/css" />
+<div id = "content-main">
+	<h3>Deferred Shading </h3>
+	<p>
+		<a href = "http://en.wikipedia.org/wiki/Deferred_shading">Deferred Shading </a> is a screen-space shading technique. It is called deferred because no shading is actually performed in the first pass of the vertex and pixel shaders: instead shading is "deferred" until a second pass. On the first pass of a deferred shader, only data that is required for shading computation is gathered. Positions, normals, and materials for each surface are rendered into the geometry buffer (G-buffer) as a series of textures. After this, a pixel shader computes the direct and indirect lighting at each pixel using the information of the texture buffers, in screen space.
+	</p>
+    <p>
+    The primary advantage of deferred shading is the decoupling of scene geometry from lighting. Compared with forward shading which takes into account all geometries in the scene and computes lighting at each pixel even if the camera does not see it, deferred shading computes lighting only for pixels that is actually affected, which save a huge amount of computational time. 
+    
+While the advantages of deferred shading is obvious, there also exists some drawbacks for example, the bandwidth usage is high because each light needs to read geometry buffer every time and it is hard to implement anti-aliasing and translucency with deferred shading technique.
+</p>
+<p>
+To write a most basic deferred shading, only vertex position, color, normal and depth information is required in the first pass. You store them into four framebuffer textures use them in the final rendering step. It will be easier if <a href="http://en.wikipedia.org/wiki/Multiple_Render_Targets">multiple render targets (MRT)</a> is available.
+</p>
+
+	<h3>Deferred shading on WebGL</h3>
+    <p>
+    </p>
+</div>
 </body>
 </html>

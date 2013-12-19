@@ -1,0 +1,10 @@
+
+#content-main 
+{ 
+	width: 500px; 
+	background-color:#eeeeee;
+	color: #454545;
+}
+#content-main a {
+	color: #a40106;
+}
