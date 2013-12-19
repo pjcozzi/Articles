@@ -3,8 +3,33 @@
 { 
 	width: 500px; 
 	background-color:#eeeeee;
-	color: #454545;
+	color:#444;
 }
+#content-main h2{
+	text-align:center;
+}
+#content-main p.authors{
+	text-align:center;
+	font-size:14px;
+}
+#content-main p.authors span{
+	font-style:italic ;
+}
+
 #content-main a {
 	color: #a40106;
+}
+
+#content-main p span.highlight{
+	font-weight:bold;
+}
+
+
+#content-main td{
+	font-size:90%;
+	width:500px;	
+	padding-left: 50px;
+	font-size: 100%; 
+	color: #614644;
+	font-family:monospace;
 }
