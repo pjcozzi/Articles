@@ -1,1 +1,1 @@
-Articles for the [Mozilla Hacks blog](https://hacks.mozilla.org/).
+Draft articles for the [Mozilla Hacks blog](https://hacks.mozilla.org/).
