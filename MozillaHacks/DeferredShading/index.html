@@ -5,152 +5,152 @@
 <body>
 <link rel="stylesheet" href="index.css" type="text/css" />
 <div id = "content-main">
-	<h2>WebGL Deferred Shading </h2>
-  <p class="authors"><span>by</span> Sijie Tian, Yuqin Shao, Patric Cozzi</p>
-	<h3>Deferred Shading </h3>
-	<p>
-		<a href = "http://en.wikipedia.org/wiki/Deferred_shading">Deferred Shading </a> is a screen-space shading technique. It is called deferred because no shading is actually performed in the first pass of the vertex and pixel shaders: instead shading is "deferred" until a second pass. On the first pass of a deferred shader, only data that is required for shading computation is gathered. Positions, normals, and materials for each surface are rendered into the geometry buffer (G-buffer) as a series of textures. After this, a pixel shader computes the direct and indirect lighting at each pixel using the information of the texture buffers, in screen space.
-  </p>
-  <p>
-    The primary advantage of deferred shading is the decoupling of scene geometry from lighting. Compared with forward shading which takes into account all geometries in the scene and computes lighting at each pixel even if the camera does not see it, deferred shading computes lighting only for pixels that is actually affected, which save a huge amount of computational time. 
-    
-While the advantages of deferred shading is obvious, there also exists some drawbacks for example, the bandwidth usage is high because each light needs to read geometry buffer every time and it is hard to implement anti-aliasing and translucency with deferred shading technique.
+<h2>WebGL Deferred Shading</h2>
+<p class="authors"><span>by</span> Sijie Tian, Yuqin Shao, Patrick Cozzi</p>
+
+<p>
+WebGL brings hardware-accelerated 3D graphics to the web.  The next version, <a href="https://wiki.mozilla.org/Platform/GFX/WebGL2" target="_blank">WebGL 2</a>, is a work-in-progress, but many features are available today as WebGL extensions.  In this article, we describe how to use the <a href="http://www.khronos.org/registry/webgl/extensions/WEBGL_draw_buffers/">WEBGL_draw_buffers</a> extension to create a scene with a large number of dynamic lights using a technique called deferred shading, which is popular among AAA games.
 </p>
 <p>
-To write a most basic deferred shading, only vertex position, color, normal and depth information is required in the first pass. You store them into four framebuffer textures use them in the final rendering step. It will be easier if <a href="http://en.wikipedia.org/wiki/Multiple_Render_Targets">multiple render targets (MRT)</a> is available.
+<img src="DeferredShadingPic1.png" />
+</p>
+<p>
+<a href="http://sijietian.com/WebGL/deferredshading/index.html">demo</a> &bullet;
+<a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader">source</a>
+</p>
+<p>
+Today, most WebGL engines use forward shading, where lighting is computed in the same pass that geometry is transformed.  This makes it difficult to support a large number of dynamic lights and different light types.
+</p>
+<p>
+Some forward shaders use a pass per light.  Rendering a scene looks like:
+</p>
+<pre>
+foreach light {
+  foreach visible mesh {
+    if (light volume intersects mesh) {
+      render using shader for this material/light;
+      accumulate in framebuffer using blending;
+    }
+  }
+}
+</pre>
+<p>
+This requires a different shader for each material/light-type combination, which can add up.  From a performance perspective, each mesh needs to be rendered (vertex transform, rasterization, material part of the fragment shader, etc.) once per light instead of just once, and occluded fragments are still shaded unless front-to-back sorting or a z-prepass is used.  In addition, even if a light's volume intersects a mesh, it may only affect a small part of the mesh, but the entire mesh is still rendered.
+</p>
+<p>
+Forward shaders can also use a single pass making rendering a scene look like:
+</p>
+<pre>
+foreach visible mesh {
+  find lights affecting mesh;
+  Render all lights and materials using a single shader;
+}
+</pre>
+<p>
+Although meshes are only rendered once, this has the same performance drawbacks for occluded fragments.  The biggest drawback is the number of shaders required since a different shader is required for each material/light (not light type) combination.  This makes shaders harder to author, increases compile times, usually requires runtime compiling, and increases the number of shaders to sort by.
+</p>
+<h2>Deferred Shading</h2>
+Deferred shading takes a different approach than forward shading by dividing rendering into two passes: one that transforms the geometry and writes positions, normals, and material properties to textures called g-buffers and another that performs lighting as a series of screen-space post-processing effects.
+<pre>
+foreach visible mesh {
+  write material properties to g-buffer;
+}
+
+foreach light {
+  compute light by reading g-buffer;
+  accumulate in framebuffer;
+}
+</pre>
+<p>
+This decouples lighting from scene complexity only requiring one shader per material and one shader per light type.  Since lighting takes place in screen-space, occluded fragments are not shaded, essentially bringing the depth complexity down to one for lighting.
+</p>
+<p>
+Until recently, WebGL had a roadblock for implementing different shading.  In WebGL, a fragment shader could only write to a single texture/renderbuffer.  With deferred shading, the g-buffer is usually composed of several textures.  This means that the geometry needed to be rendered multiple times.
+</p>
+<p>
+Now with the WEBGL_draw_buffers extension, a fragment shader can write to several textures making deferred shading possible in WebGL.  To use this extension in Firefox, browse to about:config and turn on webgl.enable-draft-extensions.  Then, to make sure your system supports WEBGL_draw_buffers, browse to <a href="http://webglreport.com/">webglreport.com</a> and verify that it is in the list of extensions at the bottom of the page.
+</p>
+<img src="DeferredShadingPic2.png"/>
+<p>
+To use the extension, first initialize it:
+</p>
+<pre lang="javascript">
+var ext = gl.getExtension("WEBGL_draw_buffers");
+if (!ext) {
+  // ...
+}
+</pre>
+<p>
+Now we can bind different texture units to framebuffer slots:
+</p>
+<pre lang="javascript">
+var buffers = [];
+buffers[0] = ext.COLOR_ATTACHMENT0_WEBGL;
+buffers[1] = ext.COLOR_ATTACHMENT1_WEBGL;
+buffers[2] = ext.COLOR_ATTACHMENT2_WEBGL;
+buffers[3] = ext.COLOR_ATTACHMENT3_WEBGL;
+ext.drawBuffersWEBGL(buffers);
+</pre>
+<p>
+In the geometry pass, the fragment shader writes to the textures.  A trivial pass-through fragment shader for testing would be:
+</p>
+<pre>
+#extension GL_EXT_draw_buffers : require
+precision highp float;
+void main(void) {
+  gl_FragData[0] = vec4(1.0);
+  gl_FragData[1] = vec4(1.0);
+  gl_FragData[2] = vec4(1.0);
+  gl_FragData[3] = vec4(1.0);
+}
+</pre>
+<p>
+Even though we initialized the extension in JavaScript with <span>gl.getExtension</span>, the GLSL code still needs to include <span>#extension GL_EXT_draw_buffers : require</span> to use the extension.  Without the extension, fragment shaders write to <span>gl_FragColor</span>; with the extension, fragment shaders now have access to <span>gl_FragData</span>, which is an array.
+</p>
+<p>
+The extension allows a single geometry pass to write to all the g-buffers, which improves performance and reduces the amount of JavaScript code.  Performance numbers using FireFox TODO and an NVIDIA GT 620M are shown below.
+</p>
+<p>
+<img src="DeferredShadingPic3.png"/>
+</p>
+<p>
+Deferred shading requires a lot of GPU memory bandwidth, which is not ideal for performance or power.  In a naive implementation, each light is rendered as a full-screen quad and reads the entirety of each g-buffer.  Since most light types, like point and spot lights, attenuate and have an area of influence, the full-screen quad can be replaced with a world-space (or other object coordinate space) bounding volume or tight screen-space bounding rectangle.
+</p>
+<h2>Tile-Based Deferred Shading</h2>
+<p>
+Tile-based deferred shading takes this a step farther and splits the screen into tiles, for example 16x16 pixels, and then determines which lights influence each tile.  Light-tile information is then passed to the shader and the g-buffer is only read once for all lights.  Since this drastically reduces memory bandwidth, it improves performance.  The following image contains 200 lights on a 800x600 screen with 16x16 tile size.
+<p>
+<p>
+<img src="DeferredShadingPic5.png"/>
+</p>
+<h2>Acknowledgements</h2>
+<p>
+We implemented this project for the course <a href="http://www.seas.upenn.edu/~cis565/" target="_blank">CIS 565: GPU Programming and Architecture</a>, which is part of the <a href="http://cg.cis.upenn.edu/" target="_blank">computer graphics program</a> at the University of Pennsylvania.  We thank <a href="http://liamboone.blogspot.com/" target="_blank">Liam Boone</a> for his support and <a href="http://erich.realtimerendering.com/" target="_blank">Eric Haines</a> for reviewing this article.
+</p>
+<h2>References</h2>
+<p>
+
+<ul>
+  <li>Our source code is on <a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader" target="_blank">github</a></li>
+  <li><a href="http://www.guerrilla-games.com/publications/dr_kz2_rsx_dev07.pdf" target="_blank">Deferred Rendering in Killzone 2</a>. Michal Valient</li>
+  <li><a href="http://www.slideshare.net/cagetu/light-prepass" target="_blank">Light Pre-Pass</a>. Wolfgang Engel</li>
+  <li><a href="http://aras-p.info/texts/CompactNormalStorage.html" target="_blank">Compact Normal Storage for Small 
+G-Buffers</a>. Aras Pranckevicius</li>
+</ul>
 </p>
 
-  <h3>Deferred shading on WebGL</h3>
-  <p>Recently, lots of game engines are using deferred shading technique to improve their performance. But it seems this technique has not found its stage on WebGL. What if we could apply this technique on WebGL? In the following, we will mainly introduce the implementation of this technique on WebGL.</p>
-    <p>
-The big problem we are facing before we could get deferred shading work on WebGL is that only WebGL 2.0 is now fully support MRT. Since very few browsers are now supporting WebGL 2.0, we still need to figure out how to implement deferred shading on WebGL 1.0. 
-A most often used method so far is to use multiple G-Buffers to store different geometry information. You may need to call draw function several times to get all required geometry information. The other way is to use the <span>WebGL_draw_buffer</span> extension, which allows MRT on WebGL 1.0. In the following we will focus on the second method.
-    </p>
-  <img src="https://raw.github.com/pjcozzi/Articles/master/MozillaHacks/DeferredShading/DeferredShadingPic1.png" \>
-    <h4>How to turn on WebGL_draw_buffer extension</h4>
-    <p>Open <span class="highlight">about:config</span> page on your Firefox browser and turn on webgl.enable-draft-extensions. Once you turn on the extension, go to <a href="http://webglreport.com/">webglreport.com</a> to check if <span class="highlight">WebGL_draw_buffer</span> extension is supported by your browser. We recommend to set your dedicated graphic card as WebGL renderer. You can check this information on about:support. For more information about this extension, go to  this website:<a href="http://www.khronos.org/registry/webgl/extensions/WEBGL_draw_buffers/">WEBGL_draw_buffers</a>
-    </p>
-  <img src="https://raw.github.com/pjcozzi/Articles/master/MozillaHacks/DeferredShading/DeferredShadingPic2.png"\>
-    <h4>How to use WebGL_draw_buffer extension</h4>
-  <p>
-    Once your Firefox browser supports the WebGL_draw_buffer extension, we can start to use it. In order to use this extension on WebGL, you need to get this extension by:
-  </p>
-    <pre lang="javascript">
-        <code>
-            <table>
-            <tr>
-                <td>
-                ext = gl.getExtension("WEBGL_draw_buffers");
-                </td>
-            </tr>
-            </table>
-        </code>
-    </pre>
-    <p>
-    	You could check if ext is equal to true with developer tool to see if the extension is turned on successfully. Here is the sample javascript code to show you how to bind different textures in framebuffer slots:
-    <pre lang="javascript">
-        <code>
-            <table>
-            <tr>
-                <td>
-                var buffers = [];
-                </td>
-            </tr>
-             <tr>
-                <td>
-                buffers [0] = ext.COLOR_ATTACHMENT0_WEBGL;
-                </td>
-            </tr>
-             <tr>
-                <td>
-               buffers [1] = ext.COLOR_ATTACHMENT1_WEBGL;
-                </td>
-            </tr>
-             <tr>
-                <td>
-                buffers [2] = ext.COLOR_ATTACHMENT2_WEBGL;
-                </td>
-            </tr>
-             <tr>
-                <td>
-                buffers [3] = ext.COLOR_ATTACHMENT3_WEBGL;
-                </td>
-            </tr>
-              <tr>
-                <td>
-                ext.drawBuffersWEBGL(buffers);
-                </td>
-            </tr>
-            </table>
-        </code>
-    </pre>
-    </p>
-    <p>Also, here is the sample code in the fragment shader of first pass:</p>
-    <pre lang="javascript">
-        <code>
-            <table>
-            <tr>
-                <td>
-               #extension GL_EXT_draw_buffers : require
-                </td>
-            </tr>
-             <tr>
-                <td>
-                precision highp float;
-                </td>
-            </tr>
-             <tr>
-                <td>
-               void main(void){
-                </td>
-            </tr>
-             <tr>
-                <td>
-                 gl_FragData[0] = vec4(1.0, 1.0, 1.0, 1.0);
-                </td>
-            </tr>
-             <tr>
-                <td>
-                 gl_FragData[1] = vec4(1.0, 1.0, 1.0, 1.0);
-                </td>
-            </tr>
-              <tr>
-                <td>
-                gl_FragData[2] = vec4(1.0, 1.0, 1.0, 1.0);
-                </td>
-            </tr>
-              <tr>
-                <td>
-                 gl_FragData[3] = vec4(1.0, 1.0, 1.0, 1.0);
-                </td>
-            </tr>
-               <tr>
-                <td>
-                }
-                </td>
-            </tr>
-            </table>
-        </code>
-    </pre>
-    <p>
-    The difference between using WebGL_draw_buffer and not is that you only need to call fragment shader once to get all geometry information. However, without using this extension(MRT), you probably need to call the same fragment shader several times to get those framebuffer textures. This extension is very helpful for deferred shading because most deferred shading needs at least position, normal, color and depth information from the first pass. By using this extension, it not only reduces code in javascript, but also saves rendering time. Here is the comparison between with and without using WebGL_draw_buffer extension running on Nvidia GT620m:
-    </p>
-  <img src="https://raw.github.com/pjcozzi/Articles/master/MozillaHacks/DeferredShading/DeferredShadingPic3.png"\>
-    <h3>Tile-based Deferred Shading on WebGL</h3>
-  <p>
-    	Although deferred shading improves the performance compared to forward shading, it still has the problem of high usage of bandwidth. In conventional deferred shading, each light reads all geometry buffers for each frame, which causes a lot of redundant bandwidth usage. Because each light will have its own affect range, which means part of pixels may not be affected by a specific light. Fortunately, an ameliorated technique called tile-based deferred shading has been figured out around 2009, which aims at solving the overhead bandwidth problem in deferred shading.
-  </p>
-  <p>
-  Just as the name indicates, the method first splits the screen into small tiles, 16x16 for example, and then groups lights in each tile. Once we know the lights in each tile, we can pass all these light-tile information to shader and read geometry buffer only once to calculate all lightings. Tile-based technique highly reduces the usage of bandwidth in deferred shading. It also makes the real-time 3D game engine on WebGL possible and attractive. The following image is an example of rendering with 200 lights on a 800x600 screen with 16x16 tile size  </p>
-  <img src="https://raw.github.com/pjcozzi/Articles/master/MozillaHacks/DeferredShading/DeferredShadingPic4.png"\>
-    <p>Here is comparison on tile-based deferred shading and deferred shading on WebGL. Both run on Nvidia GT620m. </p>
-  <img src="https://raw.github.com/pjcozzi/Articles/master/MozillaHacks/DeferredShading/DeferredShadingPic5.png"\>
-  <p>Live Demo is available <a href="http://sijietian.com/WebGL/deferredshading/index.html">here</a>.</p>
-  <p><a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader">Source Code</a></p>
-    <p>For more information: </p>
-    <p><a href="http://www.seas.upenn.edu/~cis565/">GPU Pragramming and Architecture</a></p>
-<p><a href="http://cg.cis.upenn.edu/">cg@penn </a></p>
-</div>
+<!--
+// TODO: MRT vs. multiple geometry passes with increasing scene complexity
+// TODO: Tile size performance graph
+// TODO: g-buffers, g-buffer layout, and tile debug figures
+// TODO: Reference for tile-based
+// TODO: Firefox version and OS for performance numbers
+// TODO: embed video?
+
+// Patrick TODO: bind textures when calling drawBuffersWEBGL
+// Patrick TODO: max gl_FragData[] length?
+// Patrick TODO: drawbacks of deferred shading
+-->
 
 </body>
 </html>
