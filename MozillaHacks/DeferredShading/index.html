@@ -108,13 +108,37 @@ void main(void) {
 Even though we initialized the extension in JavaScript with <span>gl.getExtension</span>, the GLSL code still needs to include <span>#extension GL_EXT_draw_buffers : require</span> to use the extension.  Without the extension, fragment shaders write to <span>gl_FragColor</span>; with the extension, fragment shaders now have access to <span>gl_FragData</span>, which is an array.
 </p>
 <p>
-The extension allows a single geometry pass to write to all the g-buffers, which improves performance and reduces the amount of JavaScript code.  Performance numbers using FireFox 25.0.1 and an NVIDIA GT 620M on Window 8 are shown below.
+  In our project, we have four different textures/buffers, respectively are depth buffer, normal buffer, position buffer and color buffer. Besides depth buffer uses unsigned short DEPTH_COMPONENT, other textures/buffers are using floating point RGBA format.
+</p>
+<p>
+Depth Rendering
+<img src="depth.png"/>
+</p>
+<p>
+Normal Rendering
+<img src="normal.png"/>
+</p>
+<p>
+Position Rendering
+<img src="position.png"/>
+</p>
+<p>
+Color and Ambient Rending
+<img src="color+ambient.png"/>
+</p>
+<p>
+G-Buffers Layout
+<img src="layout.png"/>
+</p>
+
+<p>
+The extension allows a single geometry pass to write to all the g-buffers, which improves performance and reduces the amount of JavaScript code. The difference between these two methods becomes bigger as scene complexity incresed. Performance numbers using FireFox 25.0.1 and an NVIDIA GT 620M on Window 8 are shown below.
 </p>
 <p>
 <img src="DeferredShadingPic6.png"/>
 </p>
 <p>
-Screen shot of draw buffer extension test on WebGL using Stanford Dragon.
+Screen shot of draw buffer extension test on WebGL using <a href = "http://www.d.umn.edu/~ddunham/cs5721f07/schedule/resources/models/dragon.obj">Stanford Dragon </a>.
 </p>
 <p>
 <img src="DeferredShadingPic7.png"/>
@@ -129,6 +153,22 @@ Tile-based deferred shading takes this a step farther and splits the screen into
 <p>
 <img src="DeferredShadingPic5.png"/>
 </p>
+<p>
+  TODO: tile size and frame rate
+</p>
+<p>
+<img src="DeferredShadingPic8.png"/>
+</p>
+<p>
+  TODO: Tile debug visualization. Each tile indicate the density of lights. More lights are close to white color.
+</p>
+<p>
+<img src="TileDebugView.png"/>
+</p>
+<p>
+<img src="TileView.png"/>
+</p>
+
 <h2>Acknowledgements</h2>
 <p>
 We implemented this project for the course <a href="http://www.seas.upenn.edu/~cis565/" target="_blank">CIS 565: GPU Programming and Architecture</a>, which is part of the <a href="http://cg.cis.upenn.edu/" target="_blank">computer graphics program</a> at the University of Pennsylvania.  We thank <a href="http://liamboone.blogspot.com/" target="_blank">Liam Boone</a> for his support and <a href="http://erich.realtimerendering.com/" target="_blank">Eric Haines</a> for reviewing this article.
@@ -142,6 +182,8 @@ We implemented this project for the course <a href="http://www.seas.upenn.edu/~c
   <li><a href="http://www.slideshare.net/cagetu/light-prepass" target="_blank">Light Pre-Pass</a>. Wolfgang Engel</li>
   <li><a href="http://aras-p.info/texts/CompactNormalStorage.html" target="_blank">Compact Normal Storage for Small 
 G-Buffers</a>. Aras Pranckevicius</li>
+  <li><a href="http://www.cse.chalmers.se/~uffe/tiled_shading_preprint.pdf" target="_blank">Tiled Shading</a>. Ola Olsson and Ulf Assarsson</li>
+  <li><a href="http://bps10.idav.ucdavis.edu/talks/12-lauritzen_DeferredShading_BPS_SIGGRAPH2010_Notes.pdf" target="_blank">Deferred Rendering for Current and Future Rendering Pipelines</a>. Andrew Lauritzen</li>
 </ul>
 </p>
 
