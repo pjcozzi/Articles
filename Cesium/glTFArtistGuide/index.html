@@ -1,0 +1,37 @@
+<html>
+<head>
+</head>
+<body>
+<h1>An Artist's Guide to glTF</h1>
+
+<h2>Textures</h2>
+<ul>
+  <li>Use texture atlases instead of individual textures.  This minimizes the number of files that need to be downloaded at runtime and allows the engine to batch draw calls, which improves performance.</li>
+  <li>Although the guaranteed maximum texture size in WebGL is only 64x64, all modern systems support 2048x2048, which is a reasonable upper bound for textures for glTF assets.</li>
+  <li>Use mipmapping.  This improves visual quality and runtime performance, especially for large texture atlases that would otherwise have poor memory coherence.</li>
+  <li>Use power-of-two texture dimensions.  If a non-power-of-two texture is using mipmapping, the engine will have to resize the texture at runtime.  This does not imply that the width and height need to be the same, only that each needs to be a power-of-two.</li>
+</ul>
+
+<h2>Geometry</h2>
+<ul>
+  <li>Do not include any unnecessary vertex attributes.  They may only trivially increase the size of a COLLADA export, but can bloat the final glTF asset.  Since glTF does not have per-attribute indices, attributes need to be stored for each vertex.</li>
+</ul>
+
+<h2>Modo</h2>
+<ul>
+  <li>Do not use the <em>Bake Matrices</em> COLLADA exporter option for models with animations because the exported models will not be animatable.</li>
+</ul>
+
+<h2>Blender</h2>
+<ul>
+  <li>For model's with textures, check the <em>Include UV Textures</em> COLLADA exporter option to make sure they are exported.</li>
+</ul>
+
+<h2>References</h2>
+<ul>
+<li><a href="http://webglreport.com/" target="">WebGL Report</a> - show the WebGL capabilities of your system such as maximum texture size</li>
+<li><a href="http://developer.download.nvidia.com/SDK/9.5/Samples/DEMOS/Direct3D9/src/BatchingViaTextureAtlases/AtlasCreationTool/Docs/Batching_Via_Texture_Atlases.pdf" target="_blank">Improve Batching Using Texture Atlases</a> (technical)</li>
+</ul>
+
+</body>
+</html>
