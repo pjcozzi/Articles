@@ -108,10 +108,16 @@ void main(void) {
 Even though we initialized the extension in JavaScript with <span>gl.getExtension</span>, the GLSL code still needs to include <span>#extension GL_EXT_draw_buffers : require</span> to use the extension.  Without the extension, fragment shaders write to <span>gl_FragColor</span>; with the extension, fragment shaders now have access to <span>gl_FragData</span>, which is an array.
 </p>
 <p>
-The extension allows a single geometry pass to write to all the g-buffers, which improves performance and reduces the amount of JavaScript code.  Performance numbers using FireFox TODO and an NVIDIA GT 620M are shown below.
+The extension allows a single geometry pass to write to all the g-buffers, which improves performance and reduces the amount of JavaScript code.  Performance numbers using FireFox 25.0.1 and an NVIDIA GT 620M on Window 8 are shown below.
 </p>
 <p>
-<img src="DeferredShadingPic3.png"/>
+<img src="DeferredShadingPic6.png"/>
+</p>
+<p>
+Screen shot of draw buffer extension test on WebGL using Stanford Dragon.
+</p>
+<p>
+<img src="DeferredShadingPic7.png"/>
 </p>
 <p>
 Deferred shading requires a lot of GPU memory bandwidth, which is not ideal for performance or power.  In a naive implementation, each light is rendered as a full-screen quad and reads the entirety of each g-buffer.  Since most light types, like point and spot lights, attenuate and have an area of influence, the full-screen quad can be replaced with a world-space (or other object coordinate space) bounding volume or tight screen-space bounding rectangle.
