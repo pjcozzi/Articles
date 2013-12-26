@@ -16,7 +16,8 @@ WebGL brings hardware-accelerated 3D graphics to the web.  The next version, <a 
 </p>
 <p>
 <a href="http://sijietian.com/WebGL/deferredshading/index.html">demo</a> &bullet;
-<a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader">source</a>
+<a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader">source</a> &bullet;
+<a href="https://vimeo.com/82070755">video</a>
 </p>
 <p>
 Today, most WebGL engines use forward shading, where lighting is computed in the same pass that geometry is transformed.  This makes it difficult to support a large number of dynamic lights and different light types.
@@ -132,7 +133,7 @@ G-Buffers Layout
 </p>
 
 <p>
-The extension allows a single geometry pass to write to all the g-buffers, which improves performance and reduces the amount of JavaScript code. The difference between these two methods becomes bigger as scene complexity incresed. Performance numbers using FireFox 25.0.1 and an NVIDIA GT 620M on Window 8 are shown below.
+The extension allows a single geometry pass to write to all the g-buffers, which improves performance and reduces the amount of JavaScript code. The difference between these two methods becomes bigger as scene complexity increses. Performance numbers using FireFox 25.0.1 and an NVIDIA GT 620M on Window 8 are shown below.
 </p>
 <p>
 <img src="DeferredShadingPic6.png"/>
@@ -148,19 +149,19 @@ Deferred shading requires a lot of GPU memory bandwidth, which is not ideal for 
 </p>
 <h2>Tile-Based Deferred Shading</h2>
 <p>
-Tile-based deferred shading takes this a step farther and splits the screen into tiles, for example 16x16 pixels, and then determines which lights influence each tile.  Light-tile information is then passed to the shader and the g-buffer is only read once for all lights.  Since this drastically reduces memory bandwidth, it improves performance.  The following image contains 200 lights on a 800x600 screen with 16x16 tile size.
+Tile-based deferred shading takes this a step farther and splits the screen into tiles, for example 16x16 pixels, and then determines which lights influence each tile.  Light-tile information is then passed to the shader and the g-buffer is only read once for all lights. Since this drastically reduces memory bandwidth, it improves performance.  The following image contains 200 lights on a 800x600 screen with 16x16 tile size.
 <p>
 <p>
 <img src="DeferredShadingPic5.png"/>
 </p>
 <p>
-  TODO: tile size and frame rate
+  The size of tile affects the performance. Small tile means more computation on lighting construction and storage on light-tile information, but less computation on lighting in shader. The big tile is the opposite. Therefore, choosing a suitable tile is important for the performance. The figure below is shown the relationship between tile size and performance.
 </p>
 <p>
 <img src="DeferredShadingPic8.png"/>
 </p>
 <p>
-  TODO: Tile debug visualization. Each tile indicate the density of lights. More lights are close to white color.
+Tile debug visualization is shown below. Each tile indicates the density of lights. More lights in a tile are more close to white.
 </p>
 <p>
 <img src="TileDebugView.png"/>
