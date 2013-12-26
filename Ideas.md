@@ -1,3 +1,13 @@
+* glTF Tutorial series
+   * glTF Content Pipeline
+   * glTF Geometries
+   * glTF Materials
+   * glTF Animations
+   * glTF Skinning
+   * glTF Morphs
+   * glTF Compression
+   * glTF Artist's Guide
+   * TODO: lights and cameras?
 * Back to basics: WebGL buffer management
    * Partitioning static vs. dynamic
    * Interleaving
