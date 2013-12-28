@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="index.css" type="text/css" />
 <div id = "content-main">
 <h2>WebGL Deferred Shading</h2>
-<p class="authors"><span>by</span> Sijie Tian, Yuqin Shao, Patrick Cozzi</p>
+<p class="authors"><span>by</span> Sijie Tian, Yuqin Shao and Patrick Cozzi</p>
 
 <p>
 WebGL brings hardware-accelerated 3D graphics to the web.  The next version, <a href="https://wiki.mozilla.org/Platform/GFX/WebGL2" target="_blank">WebGL 2</a>, is a work-in-progress, but many features are available today as WebGL extensions.  In this article, we describe how to use the <a href="http://www.khronos.org/registry/webgl/extensions/WEBGL_draw_buffers/">WEBGL_draw_buffers</a> extension to create a scene with a large number of dynamic lights using a technique called deferred shading, which is popular among AAA games.
@@ -15,9 +15,9 @@ WebGL brings hardware-accelerated 3D graphics to the web.  The next version, <a 
 <img src="DeferredShadingPic1.png" />
 </p>
 <p>
+<a href="https://vimeo.com/82070755">video</a> &bullet;
 <a href="http://sijietian.com/WebGL/deferredshading/index.html">demo</a> &bullet;
-<a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader">source</a> &bullet;
-<a href="https://vimeo.com/82070755">video</a>
+<a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader">source</a>
 </p>
 <p>
 Today, most WebGL engines use forward shading, where lighting is computed in the same pass that geometry is transformed.  This makes it difficult to support a large number of dynamic lights and different light types.
@@ -39,7 +39,7 @@ foreach light {
 This requires a different shader for each material/light-type combination, which can add up.  From a performance perspective, each mesh needs to be rendered (vertex transform, rasterization, material part of the fragment shader, etc.) once per light instead of just once, and occluded fragments are still shaded unless front-to-back sorting or a z-prepass is used.  In addition, even if a light's volume intersects a mesh, it may only affect a small part of the mesh, but the entire mesh is still rendered.
 </p>
 <p>
-Forward shaders can also use a single pass making rendering a scene look like:
+Forward shaders can also use a single pass rendering a scene like:
 </p>
 <pre>
 foreach visible mesh {
@@ -50,8 +50,9 @@ foreach visible mesh {
 <p>
 Although meshes are only rendered once, this has the same performance drawbacks for occluded fragments.  The biggest drawback is the number of shaders required since a different shader is required for each material/light (not light type) combination.  This makes shaders harder to author, increases compile times, usually requires runtime compiling, and increases the number of shaders to sort by.
 </p>
+
 <h2>Deferred Shading</h2>
-Deferred shading takes a different approach than forward shading by dividing rendering into two passes: one that transforms the geometry and writes positions, normals, and material properties to textures called g-buffers and another that performs lighting as a series of screen-space post-processing effects.
+Deferred shading takes a different approach than forward shading by dividing rendering into two passes: one that transforms the geometry and writes positions, normals, and material properties to textures called the g-buffer and another that performs lighting as a series of screen-space post-processing effects.
 <pre>
 foreach visible mesh {
   write material properties to g-buffer;
@@ -66,10 +67,12 @@ foreach light {
 This decouples lighting from scene complexity only requiring one shader per material and one shader per light type.  Since lighting takes place in screen-space, occluded fragments are not shaded, essentially bringing the depth complexity down to one for lighting.
 </p>
 <p>
-Until recently, WebGL had a roadblock for implementing different shading.  In WebGL, a fragment shader could only write to a single texture/renderbuffer.  With deferred shading, the g-buffer is usually composed of several textures.  This means that the geometry needed to be rendered multiple times.
+Until recently, WebGL had a roadblock for implementing deferred shading.  In WebGL, a fragment shader could only write to a single texture/renderbuffer.  With deferred shading, the g-buffer is usually composed of several textures.  This means that geometry needed to be rendered multiple times.
 </p>
+
+<h2>WEBGL_draw_buffers</h2>
 <p>
-Now with the WEBGL_draw_buffers extension, a fragment shader can write to several textures making deferred shading possible in WebGL.  To use this extension in Firefox, browse to about:config and turn on webgl.enable-draft-extensions.  Then, to make sure your system supports WEBGL_draw_buffers, browse to <a href="http://webglreport.com/">webglreport.com</a> and verify that it is in the list of extensions at the bottom of the page.
+Now with WEBGL_draw_buffers, a fragment shader can write to several textures making deferred shading possible in WebGL.  To use this extension in Firefox, browse to about:config and turn on webgl.enable-draft-extensions.  Then, to make sure your system supports WEBGL_draw_buffers, browse to <a href="http://webglreport.com/">webglreport.com</a> and verify that it is in the list of extensions at the bottom of the page.
 </p>
 <img src="DeferredShadingPic2.png"/>
 <p>
@@ -82,34 +85,60 @@ if (!ext) {
 }
 </pre>
 <p>
-Now we can bind different texture units to framebuffer slots:
+We can now bind multiple textures, <span>tx[]</span> in the example below, to different framebuffer color attachments.
 </p>
 <pre lang="javascript">
-var buffers = [];
-buffers[0] = ext.COLOR_ATTACHMENT0_WEBGL;
-buffers[1] = ext.COLOR_ATTACHMENT1_WEBGL;
-buffers[2] = ext.COLOR_ATTACHMENT2_WEBGL;
-buffers[3] = ext.COLOR_ATTACHMENT3_WEBGL;
+var fb = gl.createFramebuffer();
+gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, ext.COLOR_ATTACHMENT0_WEBGL, gl.TEXTURE_2D, tx[0], 0);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, ext.COLOR_ATTACHMENT1_WEBGL, gl.TEXTURE_2D, tx[1], 0);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, ext.COLOR_ATTACHMENT2_WEBGL, gl.TEXTURE_2D, tx[2], 0);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, ext.COLOR_ATTACHMENT3_WEBGL, gl.TEXTURE_2D, tx[3], 0);
+</pre>
+<p>
+For debugging, we can check to see if the attachments are compatible with <span>gl.checkFramebufferStatus</span>.  This call is slow and should not be called often in release code.
+</p>
+<pre>
+if(gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
+  // Can't use framebuffer.
+  // See http://www.khronos.org/opengles/sdk/docs/man/xhtml/glCheckFramebufferStatus.xml
+} 
+</pre>
+<p>
+Next, we map the color attachments to draw buffer slots that the fragment shader will write to using <code> gl_FragData</code>.
+</p>
+<pre lang="javascript">
+var buffers = [
+  ext.COLOR_ATTACHMENT0_WEBGL, // gl_FragData[0]
+  ext.COLOR_ATTACHMENT1_WEBGL, // gl_FragData[1]
+  ext.COLOR_ATTACHMENT2_WEBGL, // gl_FragData[2]
+  ext.COLOR_ATTACHMENT3_WEBGL  // gl_FragData[3]
+];
 ext.drawBuffersWEBGL(buffers);
 </pre>
 <p>
-In the geometry pass, the fragment shader writes to the textures.  A trivial pass-through fragment shader for testing would be:
+The maximum size of an array passed to <span>drawBuffersWEBGL</span> depends on the system and can be queried by calling <span>gl.getParameter(gl.MAX_DRAW_BUFFERS_WEBGL)</span>.  In GLSL, this is available as <span>gl_MaxDrawBuffers</span>.
+</p>
+<p>
+In the deferred shading geometry pass, the fragment shader writes to the textures.  A trivial pass-through fragment shader is:
 </p>
 <pre>
 #extension GL_EXT_draw_buffers : require
 precision highp float;
 void main(void) {
-  gl_FragData[0] = vec4(1.0);
-  gl_FragData[1] = vec4(1.0);
-  gl_FragData[2] = vec4(1.0);
+  gl_FragData[0] = vec4(0.25);
+  gl_FragData[1] = vec4(0.5);
+  gl_FragData[2] = vec4(0.75);
   gl_FragData[3] = vec4(1.0);
 }
 </pre>
 <p>
-Even though we initialized the extension in JavaScript with <span>gl.getExtension</span>, the GLSL code still needs to include <span>#extension GL_EXT_draw_buffers : require</span> to use the extension.  Without the extension, fragment shaders write to <span>gl_FragColor</span>; with the extension, fragment shaders now have access to <span>gl_FragData</span>, which is an array.
+Even though we initialized the extension in JavaScript with <span>gl.getExtension</span>, the GLSL code still needs to include <span>#extension GL_EXT_draw_buffers : require</span> to use the extension.  Without the extension, fragment shaders write to <span>gl_FragColor</span>; with the extension, fragment shaders now have access to the <span>gl_FragData</span> array.
 </p>
+
+<h2>g-buffers</h2>
 <p>
-  In our project, we have four different textures/buffers, respectively are depth buffer, normal buffer, position buffer and color buffer. Besides depth buffer uses unsigned short DEPTH_COMPONENT, other textures/buffers are using floating point RGBA format.
+In our project, we have four different textures/buffers, respectively are depth buffer, normal buffer, position buffer and color buffer. Besides depth buffer uses unsigned short DEPTH_COMPONENT, other textures/buffers are using floating point RGBA format.
 </p>
 <p>
 Depth Rendering
@@ -198,8 +227,6 @@ G-Buffers</a>. Aras Pranckevicius</li>
 // TODO: Firefox version and OS for performance numbers
 // TODO: embed video?
 
-// Patrick TODO: bind textures when calling drawBuffersWEBGL
-// Patrick TODO: max gl_FragData[] length?
 // Patrick TODO: drawbacks of deferred shading
 -->
 
