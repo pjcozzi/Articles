@@ -15,6 +15,7 @@
 <h2>Geometry</h2>
 <ul>
   <li>Do not include any unnecessary vertex attributes.  They may only trivially increase the size of a COLLADA export, but can bloat the final glTF asset.  Since glTF does not have per-attribute indices, attributes need to be stored for each vertex.</li>
+   <li>Use fewer nodes and meshes.  In general, runtime is better when few large meshes are used, instead of many small meshes.</li>
 </ul>
 
 <h2>Modo</h2>
