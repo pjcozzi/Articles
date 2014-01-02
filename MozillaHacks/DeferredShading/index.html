@@ -139,7 +139,7 @@ Even though we initialized the extension in JavaScript with <span class="code">g
 
 <h2>g-buffers</h2>
 <p>
-In our deferred shading implementation using WEBGL_draw_buffers, the g-buffer is composed of four textures: eye-space position, eye-space normal, diffuse color, and depth.  Position, normal, and diffuse use the floating-point RGBA format via the <a href="http://www.khronos.org/registry/webgl/extensions/OES_texture_float/" target="_blank">OES_texture_float extension</a>, and depth uses the unsigned-short <span class="code">DEPTH_COMPONENT</span> format.
+In this sibenik scene, there are 75284 triangles and 4 draw calls. Due to the limitation or greater compatibility for more devices of WebGL 1.0, the vertices for each draw call cannot exceed 65000. Therefore, we need to seperate it into several draw calls. In our deferred shading implementation using WEBGL_draw_buffers, the g-buffer is composed of four textures: eye-space position, eye-space normal, diffuse color, and depth.  Position, normal, and diffuse use the floating-point RGBA format via the <a href="http://www.khronos.org/registry/webgl/extensions/OES_texture_float/" target="_blank">OES_texture_float extension</a>, and depth uses the unsigned-short <span class="code">DEPTH_COMPONENT</span> format.
 </p>
 <p>
 <p>
@@ -172,7 +172,7 @@ All performance numbers in this article use NVIDIA GT 620M in FireFox 25.0.1 on 
 </p>
 <p>
 <img src="DeferredShadingPic7.png"/>
-WEBGL_draw_buffers test scene, shown here with TODO Stanford Dragons.
+There are 100000 triangles and 5 draw calls for each dragon. WEBGL_draw_buffers test scene, shown here with TODO Stanford Dragons.
 </p>
 <p>
 Of course, when scene complexity is very low, like the case of one Stanford Dragon, the cost of the g-buffer pass is low so the savings from WEBGL_draw_buffers are minimal, especially if there are many lights in the scene, which drives up the cost of the light accumulation pass. 
@@ -182,7 +182,7 @@ Deferred shading requires a lot of GPU memory bandwidth, which is not ideal for 
 </p>
 <h2>Tile-Based Deferred Shading</h2>
 <p>
-Tile-based deferred shading takes this a step farther and splits the screen into tiles, for example 16x16 pixels, and then determines which lights influence each tile.  Light-tile information is then passed to the shader and the g-buffer is only read once for all lights. Since this drastically reduces memory bandwidth, it improves performance.  The following graph shows performance for a scene with 200 lights at 800x600 with 16x16 tiles.
+Tile-based deferred shading takes this a step farther and splits the screen into tiles, for example 16x16 pixels, and then determines which lights influence each tile.  Light-tile information is then passed to the shader and the g-buffer is only read once for all lights. Since this drastically reduces memory bandwidth, it improves performance.  The following graph shows performance for a scene with 200 lights at 1024x768 with 32x32 tiles use NVIDIA GT 620M.
 <p>
 <p>
 <img src="DeferredShadingPic5.png"/>
