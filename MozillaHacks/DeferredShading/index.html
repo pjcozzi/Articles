@@ -168,14 +168,17 @@ This g-buffer layout is simple for our testing.  An optimized implementation wil
 Using WEBGL_draw_buffers, we can use a single pass to write each texture in the g-buffer.  Compared to using a single pass per texture, this improves performance and reduces the amount of JavaScript code and GLSL shaders.  As shown in the graph below, as scene complexity increases so does the benefit of using WEBGL_draw_buffers.  Since increasing scene complexity requires more <span class="code">drawElements</span>/<span class="code">drawArrays</span> calls, more JavaScript overhead, and transforms more triangles, WEBGL_draw_buffers provides a benefit since the g-buffer is written in a single pass, not a pass per texture.
 </p>
 <p>
-<img src="DeferredShadingPic6.png"/>
+<img src="drawbufferextesnionwithdragons.png"/>
+</p>
+<p>
+<img src="drawbufferextesnionwithlights.png"/>
 </p>
 <p>
 All performance numbers were measured using an NVIDIA GT 620M in FireFox 25.0.1 on Window 8.  In the above graph, each Stanford Dragon is 100,000 triangles and requires five draw calls so, for example, when 50 dragons are rendered, 250 draw calls (and related state changes) are issued, and a total of 25,000,000 triangles are transformed.
 </p>
 <p>
 <img src="DeferredShadingPic7.png"/>
-WEBGL_draw_buffers test scene, shown here with TODO Stanford Dragons.
+WEBGL_draw_buffers test scene, shown here with 100 Stanford Dragons using 20 point lights. The light intesity decrease proportionally to the square of distance between the current position and the light position increase.
 </p>
 <p>
 Of course, when scene complexity is very low, like the case of one dragon, the cost of the g-buffer pass is low so the savings from WEBGL_draw_buffers are minimal, especially if there are many lights in the scene, which drives up the cost of the light accumulation pass. 
@@ -201,9 +204,6 @@ Tile debug visualization is shown below. Each tile indicates the density of ligh
 </p>
 <p>
 <img src="TileDebugView.png"/>
-</p>
-<p>
-<img src="TileView.png"/>
 </p>
 
 <h2>Acknowledgements</h2>
