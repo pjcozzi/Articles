@@ -16,8 +16,8 @@ WebGL brings hardware-accelerated 3D graphics to the web.  Many features of <a h
 </p>
 <p>
 <a href="https://vimeo.com/82070755">video</a> &bullet;
-<a href="http://sijietian.com/WebGL/deferredshading/index.html">demo</a> &bullet;
-<a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader">source</a>
+<a href="http://sijietian.com/WebGL/deferredshading/index.html">live demo</a> &bullet;
+<a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader">source code</a>
 </p>
 <p>
 Today, most WebGL engines use forward shading, where lighting is computed in the same pass that geometry is transformed.  This makes it difficult to support a large number of dynamic lights and different light types.
@@ -52,7 +52,7 @@ Although meshes are only rendered once, this has the same performance drawbacks 
 </p>
 
 <h2>Deferred Shading</h2>
-Deferred shading takes a different approach than forward shading by dividing rendering into two passes: one that transforms the geometry and writes positions, normals, and material properties to textures called the g-buffer, and another that performs lighting as a series of screen-space post-processing effects.  These are called the g-buffer and light accumulation passes, respectively.
+Deferred shading takes a different approach than forward shading by dividing rendering into two passes: one that transforms the geometry and writes positions, normals, and material properties to textures called the g-buffer, and another that performs lighting as a series of screen-space post-processing effects.  These are called the g-buffer pass and light accumulation pass, respectively.
 <pre>
 // g-buffer pass
 foreach visible mesh {
@@ -66,15 +66,15 @@ foreach light {
 }
 </pre>
 <p>
-This decouples lighting from scene complexity and only requires one shader per material and per light type.  Since lighting takes place in screen-space, occluded fragments are not shaded, essentially bringing the depth complexity down to one.
+This decouples lighting from scene complexity and only requires one shader per material and per light type.  Since lighting takes place in screen-space, occluded fragments are not shaded, essentially bringing the depth complexity down to one.  There are also downsides such as its high memory bandwidth usage and making translucency and anti-aliasing difficult.
 </p>
 <p>
-Until recently, WebGL had a roadblock for implementing deferred shading.  In WebGL, a fragment shader could only write to a single texture/renderbuffer.  With deferred shading, the g-buffer is usually composed of several textures.  This means that geometry needed to be rendered multiple times.
+Until recently, WebGL had a roadblock for implementing deferred shading.  In WebGL, a fragment shader could only write to a single texture/renderbuffer.  With deferred shading, the g-buffer is usually composed of several textures.  This means that the scene needed to be rendered multiple times during the g-buffer pass.
 </p>
 
 <h2>WEBGL_draw_buffers</h2>
 <p>
-Now with the WEBGL_draw_buffers extension, a fragment shader can write to several textures.  To use this extension in Firefox, browse to about:config and turn on webgl.enable-draft-extensions.  Then, to make sure your system supports WEBGL_draw_buffers, browse to <a href="http://webglreport.com/">webglreport.com</a> and verify that it is in the list of extensions at the bottom of the page.
+Now with the WEBGL_draw_buffers extension, a fragment shader can write to several textures.  To use this extension in Firefox, browse to <span class="code">about:config</span> and turn on <span class="code">webgl.enable-draft-extensions</span>.  Then, to make sure your system supports WEBGL_draw_buffers, browse to <a href="http://webglreport.com/">webglreport.com</a> and verify it is in the list of extensions at the bottom of the page.
 </p>
 <img src="DeferredShadingPic2.png"/>
 <p>
@@ -139,7 +139,7 @@ Even though we initialized the extension in JavaScript with <span class="code">g
 
 <h2>g-buffers</h2>
 <p>
-In our deferred shading implementation using WEBGL_draw_buffers, the g-buffer is composed of four textures: eye-space position, eye-space normal, color, and depth.  Position, normal, and color use the floating-point RGBA format via the <a href="http://www.khronos.org/registry/webgl/extensions/OES_texture_float/" target="_blank">OES_texture_float extension</a>, and depth uses the unsigned-short <span class="code">DEPTH_COMPONENT</span> format.
+In our deferred shading implementation the g-buffer is composed of four textures: eye-space position, eye-space normal, color, and depth.  Position, normal, and color use the floating-point RGBA format via the <a href="http://www.khronos.org/registry/webgl/extensions/OES_texture_float/" target="_blank">OES_texture_float</a> extension, and depth uses the unsigned-short <span class="code">DEPTH_COMPONENT</span> format.
 </p>
 <p>
 <p>
@@ -162,27 +162,28 @@ Light accumulation using g-buffers
 <img src="layout.png"/>
 </p>
 <p>
-This g-buffer layout is simple for our testing.  An optimized implementation will try to use the least amount of memory by lowering precision, reconstructing position from depth, packing values together, using different distributions, and so on.
+This g-buffer layout is simple for our testing.  Although four textures is common for a full deferred shading engine, an optimized implementation would try to use the least amount of memory by lowering precision, reconstructing position from depth, packing values together, using different distributions, and so on.
 </p>
 <p>
-Using WEBGL_draw_buffers, we can use a single pass to write each texture in the g-buffer.  Compared to using a single pass per texture, this improves performance and reduces the amount of JavaScript code and GLSL shaders.  As shown in the graph below, as scene complexity increases so does the benefit of using WEBGL_draw_buffers.  Since increasing scene complexity requires more <span class="code">drawElements</span>/<span class="code">drawArrays</span> calls, more JavaScript overhead, and transforms more triangles, WEBGL_draw_buffers provides a benefit since the g-buffer is written in a single pass, not a pass per texture.
+With WEBGL_draw_buffers, we can use a single pass to write each texture in the g-buffer.  Compared to using a single pass per texture, this improves performance and reduces the amount of JavaScript code and GLSL shaders.  As shown in the graph below, as scene complexity increases so does the benefit of using WEBGL_draw_buffers.  Since increasing scene complexity requires more <span class="code">drawElements</span>/<span class="code">drawArrays</span> calls, more JavaScript overhead, and transforms more triangles, WEBGL_draw_buffers provides a benefit by writing the g-buffer in a single pass, not a pass per texture.
 </p>
 <p>
 <img src="drawbufferextesnionwithdragons.png"/>
 </p>
 <p>
-<img src="drawbufferextesnionwithlights.png"/>
-</p>
-<p>
-All performance numbers were measured using an NVIDIA GT 620M in FireFox 25.0.1 on Window 8.  In the above graph, each Stanford Dragon is 100,000 triangles and requires five draw calls so, for example, when 50 dragons are rendered, 250 draw calls (and related state changes) are issued, and a total of 5,000,000 triangles are transformed.
+All performance numbers were measured using an NVIDIA GT 620M in FireFox 25.0.1 on Window 8.  In the above graph, 20 point lights were used. The light intensity decreases proportionally to the square of distance between the current position and the light position.  Each Stanford Dragon is 100,000 triangles and requires five draw calls so, for example, when 50 dragons are rendered, 250 draw calls (and related state changes) are issued, and a total of 5,000,000 triangles are transformed.
 </p>
 <p>
 <img src="DeferredShadingPic7.png"/>
-WEBGL_draw_buffers test scene, shown here with 100 Stanford Dragons using 20 point lights. The light intesity decrease proportionally to the square of distance between the current position and the light position increase.
+WEBGL_draw_buffers test scene, shown here with 100 Stanford Dragons.
 </p>
 <p>
-Of course, when scene complexity is very low, like the case of one dragon, the cost of the g-buffer pass is low so the savings from WEBGL_draw_buffers are minimal, especially if there are many lights in the scene, which drives up the cost of the light accumulation pass. 
+Of course, when scene complexity is very low, like the case of one dragon, the cost of the g-buffer pass is low so the savings from WEBGL_draw_buffers are minimal, especially if there are many lights in the scene, which drives up the cost of the light accumulation pass as shown in the graph below. 
 </p>
+<p>
+<img src="drawbufferextesnionwithlights.png"/>
+</p>
+
 <p>
 Deferred shading requires a lot of GPU memory bandwidth, which can hurt performance and increase power usage.  After the g-buffer pass, a naive implementation of the light accumulation pass would render each light as a full-screen quad and read the entirety of each g-buffer.  Since most light types, like point and spot lights, attenuate and have a limited area of influence, the full-screen quad can be replaced with a world-space bounding volume or tight screen-space bounding rectangle.
 </p>
@@ -200,12 +201,15 @@ Tile size affects performance.  Smaller tiles require more JavaScript overhead t
 <img src="DeferredShadingPic8.png"/>
 </p>
 <p>
-Tile debug visualization is shown below. Each tile indicates the density of lights. The color of each tile is calculated by using the max number of light in that tile divided by the max number of lights in the scene. More lights in a tile means closer to white.
+A visualization of the number of lights in each tile is shown below.  Black tiles have no lights intersecting them and white tiles have the most lights.
 </p>
 <p>
 <img src="TileDebugView.png"/>
 </p>
-
+<h2>Conclusion</h2>
+<p>
+WEBGL_draw_buffers is a useful extension for improving the performance of deferred shading in WebGL.  Checkout the <a href="http://sijietian.com/WebGL/deferredshading/index.html">live demo</a> and our <a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader">code</a> on github.
+</p>
 <h2>Acknowledgements</h2>
 <p>
 We implemented this project for the course <a href="http://www.seas.upenn.edu/~cis565/" target="_blank">CIS 565: GPU Programming and Architecture</a>, which is part of the <a href="http://cg.cis.upenn.edu/" target="_blank">computer graphics program</a> at the University of Pennsylvania.  We thank <a href="http://liamboone.blogspot.com/" target="_blank">Liam Boone</a> for his support and <a href="http://erich.realtimerendering.com/" target="_blank">Eric Haines</a> for reviewing this article.
@@ -214,23 +218,15 @@ We implemented this project for the course <a href="http://www.seas.upenn.edu/~c
 <p>
 
 <ul>
-  <li>Our source code is on <a href="https://github.com/YuqinShao/Tile_Based_WebGL_DeferredShader" target="_blank">github</a></li>
-  <li><a href="http://www.guerrilla-games.com/publications/dr_kz2_rsx_dev07.pdf" target="_blank">Deferred Rendering in Killzone 2</a>. Michal Valient</li>
-  <li><a href="http://www.slideshare.net/cagetu/light-prepass" target="_blank">Light Pre-Pass</a>. Wolfgang Engel</li>
+  <li><a href="http://www.guerrilla-games.com/publications/dr_kz2_rsx_dev07.pdf" target="_blank">Deferred Rendering in Killzone 2</a> by Michal Valient</li>
+  <li><a href="http://www.slideshare.net/cagetu/light-prepass" target="_blank">Light Pre-Pass</a> by Wolfgang Engel</li>
   <li><a href="http://aras-p.info/texts/CompactNormalStorage.html" target="_blank">Compact Normal Storage for Small 
-G-Buffers</a>. Aras Pranckevicius</li>
-  <li><a href="http://www.cse.chalmers.se/~uffe/tiled_shading_preprint.pdf" target="_blank">Tiled Shading</a>. Ola Olsson and Ulf Assarsson</li>
-  <li><a href="http://bps10.idav.ucdavis.edu/talks/12-lauritzen_DeferredShading_BPS_SIGGRAPH2010_Notes.pdf" target="_blank">Deferred Rendering for Current and Future Rendering Pipelines</a>. Andrew Lauritzen</li>
+G-Buffers</a> by Aras Pranckevicius</li>
+  <li><a href="http://www.cse.chalmers.se/~uffe/tiled_shading_preprint.pdf" target="_blank">Tiled Shading</a> by Ola Olsson and Ulf Assarsson</li>
+  <li><a href="http://bps10.idav.ucdavis.edu/talks/12-lauritzen_DeferredShading_BPS_SIGGRAPH2010_Notes.pdf" target="_blank">Deferred Rendering for Current and Future Rendering Pipelines</a> by Andrew Lauritzen</li>
 
 </ul>
 </p>
-
-<!--
-// TODO: embed video?
-
-// Patrick TODO: drawbacks of deferred shading
-// Patrick TODO: closing
--->
 
 </body>
 </html>
