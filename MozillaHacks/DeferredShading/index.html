@@ -139,7 +139,7 @@ Even though we initialized the extension in JavaScript with <span class="code">g
 
 <h2>g-buffers</h2>
 <p>
-In our deferred shading implementation using WEBGL_draw_buffers, the g-buffer is composed of four textures: eye-space position, eye-space normal, diffuse color, and depth.  Position, normal, and diffuse use the floating-point RGBA format via the <a href="http://www.khronos.org/registry/webgl/extensions/OES_texture_float/" target="_blank">OES_texture_float extension</a>, and depth uses the unsigned-short <span class="code">DEPTH_COMPONENT</span> format.
+In our deferred shading implementation using WEBGL_draw_buffers, the g-buffer is composed of four textures: eye-space position, eye-space normal, color, and depth.  Position, normal, and color use the floating-point RGBA format via the <a href="http://www.khronos.org/registry/webgl/extensions/OES_texture_float/" target="_blank">OES_texture_float extension</a>, and depth uses the unsigned-short <span class="code">DEPTH_COMPONENT</span> format.
 </p>
 <p>
 <p>
@@ -151,8 +151,8 @@ Normal texture
 <img src="normal.png"/>
 </p>
 <p>
-Diffuse texture
-<img src="color+ambient.png"/>
+Color texture
+<img src="color.png"/>
 </p>
 Depth texture
 <img src="depth.png"/>
@@ -174,7 +174,7 @@ Using WEBGL_draw_buffers, we can use a single pass to write each texture in the 
 <img src="drawbufferextesnionwithlights.png"/>
 </p>
 <p>
-All performance numbers were measured using an NVIDIA GT 620M in FireFox 25.0.1 on Window 8.  In the above graph, each Stanford Dragon is 100,000 triangles and requires five draw calls so, for example, when 50 dragons are rendered, 250 draw calls (and related state changes) are issued, and a total of 25,000,000 triangles are transformed.
+All performance numbers were measured using an NVIDIA GT 620M in FireFox 25.0.1 on Window 8.  In the above graph, each Stanford Dragon is 100,000 triangles and requires five draw calls so, for example, when 50 dragons are rendered, 250 draw calls (and related state changes) are issued, and a total of 5,000,000 triangles are transformed.
 </p>
 <p>
 <img src="DeferredShadingPic7.png"/>
@@ -188,13 +188,13 @@ Deferred shading requires a lot of GPU memory bandwidth, which can hurt performa
 </p>
 <h2>Tile-Based Deferred Shading</h2>
 <p>
-Tile-based deferred shading takes this a step farther and splits the screen into tiles, for example 16x16 pixels, and then determines which lights influence each tile.  Light-tile information is then passed to the shader and the g-buffer is only read once for all lights. Since this drastically reduces memory bandwidth, it improves performance.  The following graph shows performance for the sibenik scene (75,284 triangles and four draw calls) with 200 lights at 1024x768 with 32x32 tiles.
+Tile-based deferred shading takes this a step farther and splits the screen into tiles, for example 16x16 pixels, and then determines which lights influence each tile.  Light-tile information is then passed to the shader and the g-buffer is only read once for all lights. Since this drastically reduces memory bandwidth, it improves performance.  The following graph shows performance for the sponza scene (66,450 triangles and 38 draw calls) at 1024x768 with 32x32 tiles.
 <p>
 <p>
 <img src="DeferredShadingPic5.png"/>
 </p>
 <p>
-Tile size affects performance.  Smaller tiles require more JavaScript overhead to create light-tile information, but less computation in the lighting shader.  Larger tiles have the opposite tradeoff.  Therefore, choosing a suitable tile is important for the performance. The figure below is shown the relationship between tile size and performance.
+Tile size affects performance.  Smaller tiles require more JavaScript overhead to create light-tile information, but less computation in the lighting shader.  Larger tiles have the opposite tradeoff.  Therefore, choosing a suitable tile is important for the performance. The figure below is shown the relationship between tile size and performance with 100 lights.
 </p>
 <p>
 <img src="DeferredShadingPic8.png"/>
