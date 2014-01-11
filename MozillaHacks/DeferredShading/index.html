@@ -9,7 +9,7 @@
 <p class="authors"><span>by</span> Sijie Tian, Yuqin Shao and Patrick Cozzi</p>
 
 <p>
-WebGL brings hardware-accelerated 3D graphics to the web.  Many features of <a href="https://wiki.mozilla.org/Platform/GFX/WebGL2" target="_blank">WebGL 2</a> are available today as WebGL extensions.  In this article, we describe how to use the <a href="http://www.khronos.org/registry/webgl/extensions/WEBGL_draw_buffers/">WEBGL_draw_buffers</a> extension to create a scene with a large number of dynamic lights using a technique called deferred shading, which is popular among AAA games.
+WebGL brings hardware-accelerated 3D graphics to the web.  Many features of <a href="https://wiki.mozilla.org/Platform/GFX/WebGL2" target="_blank">WebGL 2</a> are available today as WebGL extensions.  In this article, we describe how to use the <a href="http://www.khronos.org/registry/webgl/extensions/WEBGL_draw_buffers/">WEBGL_draw_buffers</a> extension to create a scene with a large number of dynamic lights using a technique called deferred shading, which is popular among top-tier games.
 </p>
 <p>
 <img src="DeferredShadingPic1.png" />
@@ -30,13 +30,19 @@ foreach light {
   foreach visible mesh {
     if (light volume intersects mesh) {
       render using shader for this material/light;
-      accumulate in framebuffer using blending;
+      accumulate in framebuffer using additive blending;
     }
   }
 }
 </pre>
 <p>
-This requires a different shader for each material/light-type combination, which adds up.  From a performance perspective, each mesh needs to be rendered (vertex transform, rasterization, material part of the fragment shader, etc.) once per light instead of just once, and occluded fragments are still shaded unless front-to-back sorting or a z-prepass is used.  In addition, even if a light's volume intersects a mesh, it may only affect a small part of the mesh, but the entire mesh is still rendered.
+This requires a different shader for each material/light-type combination, which adds up.  From a performance perspective, each mesh needs to be rendered (vertex transform, rasterization, material part of the fragment shader, etc.) once per light instead of just once.  In addition, fragments that ultimately fail the depth test are still shaded, but with early-z and z-cull hardware optimizations and optionally a front-to-back sorting or a z-prepass, this not as bad as the cost for each light.
+</p>
+<p>
+To allow us to optimize performance, we use light sources that have a limited effect. Unlike real-world light sources, we allow the light from a point source to travel only a limited distance.  However, even if a light's volume of effect intersects a mesh, it may only affect a small part of the mesh, but the entire mesh is still rendered.
+</p>
+<p>
+In practice, forward shaders usually try to do as much work as they can in a single pass leading to the need for a complex system of chaining lights together in a single shader.  For example:
 </p>
 <p>
 Forward shading can also use a single pass rendering a scene like:
@@ -48,7 +54,7 @@ foreach visible mesh {
 }
 </pre>
 <p>
-Although meshes are only rendered once, this has the same performance drawbacks for occluded fragments.  The biggest drawback is the number of shaders required since a different shader is required for each material/light (not light type) combination.  This makes shaders harder to author, increases compile times, usually requires runtime compiling, and increases the number of shaders to sort by.
+The biggest drawback is the number of shaders required since a different shader is required for each material/light (not light type) combination.  This makes shaders harder to author, increases compile times, usually requires runtime compiling, and increases the number of shaders to sort by.  Although meshes are only rendered once, this also has the same performance drawbacks for fragments that fail the depth test.
 </p>
 
 <h2>Deferred Shading</h2>
@@ -222,7 +228,7 @@ We implemented this project for the course <a href="http://www.seas.upenn.edu/~c
 <p>
 
 <ul>
-  <li><a href="http://www.guerrilla-games.com/publications/dr_kz2_rsx_dev07.pdf" target="_blank">Deferred Rendering in Killzone 2</a> by Michal Valient</li>
+  <li><a href="http://www.guerrilla-games.com/publications/dr_kz2_rsx_dev07.pdff" target="_blank">Deferred Rendering in Killzone 2</a> by Michal Valient</li>
   <li><a href="http://www.slideshare.net/cagetu/light-prepass" target="_blank">Light Pre-Pass</a> by Wolfgang Engel</li>
   <li><a href="http://aras-p.info/texts/CompactNormalStorage.html" target="_blank">Compact Normal Storage for Small 
 G-Buffers</a> by Aras Pranckevicius</li>
