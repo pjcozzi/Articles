@@ -36,16 +36,13 @@ foreach light {
 }
 </pre>
 <p>
-This requires a different shader for each material/light-type combination, which adds up.  From a performance perspective, each mesh needs to be rendered (vertex transform, rasterization, material part of the fragment shader, etc.) once per light instead of just once.  In addition, fragments that ultimately fail the depth test are still shaded, but with early-z and z-cull hardware optimizations and optionally a front-to-back sorting or a z-prepass, this not as bad as the cost for each light.
+This requires a different shader for each material/light-type combination, which adds up.  From a performance perspective, each mesh needs to be rendered (vertex transform, rasterization, material part of the fragment shader, etc.) once per light instead of just once.  In addition, fragments that ultimately fail the depth test are still shaded, but with early-z and z-cull hardware optimizations and a front-to-back sorting or a z-prepass, this not as bad as the cost for adding lights.
 </p>
 <p>
-To allow us to optimize performance, we use light sources that have a limited effect. Unlike real-world light sources, we allow the light from a point source to travel only a limited distance.  However, even if a light's volume of effect intersects a mesh, it may only affect a small part of the mesh, but the entire mesh is still rendered.
+To optimize performance, light sources that have a limited effect are often used. Unlike real-world lights, we allow the light from a point source to travel only a limited distance.  However, even if a light's volume of effect intersects a mesh, it may only affect a small part of the mesh, but the entire mesh is still rendered.
 </p>
 <p>
 In practice, forward shaders usually try to do as much work as they can in a single pass leading to the need for a complex system of chaining lights together in a single shader.  For example:
-</p>
-<p>
-Forward shading can also use a single pass rendering a scene like:
 </p>
 <pre>
 foreach visible mesh {
@@ -54,11 +51,11 @@ foreach visible mesh {
 }
 </pre>
 <p>
-The biggest drawback is the number of shaders required since a different shader is required for each material/light (not light type) combination.  This makes shaders harder to author, increases compile times, usually requires runtime compiling, and increases the number of shaders to sort by.  Although meshes are only rendered once, this also has the same performance drawbacks for fragments that fail the depth test.
+The biggest drawback is the number of shaders required since a different shader is required for each material/light (not light type) combination.  This makes shaders harder to author, increases compile times, usually requires runtime compiling, and increases the number of shaders to sort by.  Although meshes are only rendered once, this also has the same performance drawbacks for fragments that fail the depth test as the multi-pass approach.
 </p>
 
 <h2>Deferred Shading</h2>
-Deferred shading takes a different approach than forward shading by dividing rendering into two passes: one that transforms the geometry and writes positions, normals, and material properties to textures called the g-buffer, and another that performs lighting as a series of screen-space post-processing effects.  These are called the g-buffer pass and light accumulation pass, respectively.
+Deferred shading takes a different approach than forward shading by dividing rendering into two passes: the g-buffer passes, which transforms geometry and writes positions, normals, and material properties to textures called the g-buffer, and the light accumulation pass, which performs lighting as a series of screen-space post-processing effects.
 <pre>
 // g-buffer pass
 foreach visible mesh {
@@ -72,7 +69,7 @@ foreach light {
 }
 </pre>
 <p>
-This decouples lighting from scene complexity and only requires one shader per material and per light type.  Since lighting takes place in screen-space, occluded fragments are not shaded, essentially bringing the depth complexity down to one.  There are also downsides such as its high memory bandwidth usage and making translucency and anti-aliasing difficult.
+This decouples lighting from scene complexity and only requires one shader per material and per light type.  Since lighting takes place in screen-space, fragments failing the z-test are not shaded, essentially bringing the depth complexity down to one.  There are also downsides such as its high memory bandwidth usage and making translucency and anti-aliasing difficult.
 </p>
 <p>
 Until recently, WebGL had a roadblock for implementing deferred shading.  In WebGL, a fragment shader could only write to a single texture/renderbuffer.  With deferred shading, the g-buffer is usually composed of several textures.  This means that the scene needed to be rendered multiple times during the g-buffer pass.
@@ -191,7 +188,7 @@ Of course, when scene complexity is very low, like the case of one dragon, the c
 </p>
 
 <p>
-Deferred shading requires a lot of GPU memory bandwidth, which can hurt performance and increase power usage.  After the g-buffer pass, a naive implementation of the light accumulation pass would render each light as a full-screen quad and read the entirety of each g-buffer.  Since most light types, like point and spot lights, attenuate and have a limited area of influence, the full-screen quad can be replaced with a world-space bounding volume or tight screen-space bounding rectangle.
+Deferred shading requires a lot of GPU memory bandwidth, which can hurt performance and increase power usage.  After the g-buffer pass, a naive implementation of the light accumulation pass would render each light as a full-screen quad and read the entirety of each g-buffer.  Since most light types, like point and spot lights, attenuate and have a limited area of influence, the full-screen quad can be replaced with a world-space bounding volume or tight screen-space bounding rectangle.  Our implementation renders a full-screen quad per light and uses the scissor test to limit the fragment shader to the lights area of influence.
 </p>
 <h2>Tile-Based Deferred Shading</h2>
 <p>
