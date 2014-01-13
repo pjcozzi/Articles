@@ -55,7 +55,7 @@ The biggest drawback is the number of shaders required since a different shader 
 </p>
 
 <h2>Deferred Shading</h2>
-Deferred shading takes a different approach than forward shading by dividing rendering into two passes: the g-buffer passes, which transforms geometry and writes positions, normals, and material properties to textures called the g-buffer, and the light accumulation pass, which performs lighting as a series of screen-space post-processing effects.
+Deferred shading takes a different approach than forward shading by dividing rendering into two passes: the g-buffer pass, which transforms geometry and writes positions, normals, and material properties to textures called the g-buffer, and the light accumulation pass, which performs lighting as a series of screen-space post-processing effects.
 <pre>
 // g-buffer pass
 foreach visible mesh {
@@ -69,10 +69,10 @@ foreach light {
 }
 </pre>
 <p>
-This decouples lighting from scene complexity and only requires one shader per material and per light type.  Since lighting takes place in screen-space, fragments failing the z-test are not shaded, essentially bringing the depth complexity down to one.  There are also downsides such as its high memory bandwidth usage and making translucency and anti-aliasing difficult.
+This decouples lighting from scene complexity (number of triangles) and only requires one shader per material and per light type.  Since lighting takes place in screen-space, fragments failing the z-test are not shaded, essentially bringing the depth complexity down to one.  There are also downsides such as its high memory bandwidth usage and making translucency and anti-aliasing difficult.
 </p>
 <p>
-Until recently, WebGL had a roadblock for implementing deferred shading.  In WebGL, a fragment shader could only write to a single texture/renderbuffer.  With deferred shading, the g-buffer is usually composed of several textures.  This means that the scene needed to be rendered multiple times during the g-buffer pass.
+Until recently, WebGL had a roadblock for implementing deferred shading.  In WebGL, a fragment shader could only write to a single texture/renderbuffer.  With deferred shading, the g-buffer is usually composed of several textures, which meant that the scene needed to be rendered multiple times during the g-buffer pass.
 </p>
 
 <h2>WEBGL_draw_buffers</h2>
@@ -174,7 +174,7 @@ With WEBGL_draw_buffers, we can use a single pass to write each texture in the g
 <img src="drawbufferextesnionwithdragons.png"/>
 </p>
 <p>
-All performance numbers were measured using an NVIDIA GT 620M in FireFox 26.0 on Window 8.  In the above graph, 20 point lights were used. The light intensity decreases proportionally to the square of the distance between the current position and the light position.  Each Stanford Dragon is 100,000 triangles and requires five draw calls so, for example, when 25 dragons are rendered, 125 draw calls (and related state changes) are issued, and a total of 2,500,000 triangles are transformed.
+All performance numbers were measured using an NVIDIA GT 620M, which is a low-end GPU with 96 cores, in FireFox 26.0 on Window 8.  In the above graph, 20 point lights were used. The light intensity decreases proportionally to the square of the distance between the current position and the light position.  Each Stanford Dragon is 100,000 triangles and requires five draw calls so, for example, when 25 dragons are rendered, 125 draw calls (and related state changes) are issued, and a total of 2,500,000 triangles are transformed.
 </p>
 <p>
 <img src="DeferredShadingPic7.png"/>
@@ -188,7 +188,7 @@ Of course, when scene complexity is very low, like the case of one dragon, the c
 </p>
 
 <p>
-Deferred shading requires a lot of GPU memory bandwidth, which can hurt performance and increase power usage.  After the g-buffer pass, a naive implementation of the light accumulation pass would render each light as a full-screen quad and read the entirety of each g-buffer.  Since most light types, like point and spot lights, attenuate and have a limited area of influence, the full-screen quad can be replaced with a world-space bounding volume or tight screen-space bounding rectangle.  Our implementation renders a full-screen quad per light and uses the scissor test to limit the fragment shader to the lights area of influence.
+Deferred shading requires a lot of GPU memory bandwidth, which can hurt performance and increase power usage.  After the g-buffer pass, a naive implementation of the light accumulation pass would render each light as a full-screen quad and read the entirety of each g-buffer.  Since most light types, like point and spot lights, attenuate and have a limited volume of effect, the full-screen quad can be replaced with a world-space bounding volume or tight screen-space bounding rectangle.  Our implementation renders a full-screen quad per light and uses the scissor test to limit the fragment shader to the light's volume of effect.
 </p>
 <h2>Tile-Based Deferred Shading</h2>
 <p>
