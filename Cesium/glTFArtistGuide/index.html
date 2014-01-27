@@ -3,9 +3,12 @@
 </head>
 <body>
 <h1>An Artist's Guide to glTF</h1>
-
+<p>
+By Patrick Cozzi and Branden Coker
+</p>
 <h2>Textures</h2>
 <ul>
+  <li>Use a single vertex map for all textures. Multiple textures can be used to maximize use of the UV space, but all textures should share a single UV map.</li>
   <li>Use texture atlases instead of individual textures.  This minimizes the number of files that need to be downloaded at runtime and allows the engine to batch draw calls, which improves performance.</li>
   <li>Although the guaranteed maximum texture size in WebGL is only 64x64, all modern systems support 2048x2048, which is a reasonable upper bound for textures for glTF assets.</li>
   <li>Use mipmapping.  This improves visual quality and runtime performance, especially for large texture atlases that would otherwise have poor memory coherence.</li>
@@ -20,6 +23,9 @@
 
 <h2>Modo</h2>
 <ul>
+  <li>Disable cameras, lights, vertex colors, and vertex weights as well as all application profiles in the COLLADA exporter to avoid exporting any unused data.</li>
+  <li>Delete any unused transform, rotation, and scale matrices from mesh items as these will export even if there is no animation.</li>
+  <li>Instanced keyframes must be baked before export. These occur when instances are created from animated mesh items. Although they will animate as expected in Modo, they will not export unless baked.</li>
   <li>Do not use the <em>Bake Matrices</em> COLLADA exporter option for models with animations because the exported models will not be animatable.</li>
 </ul>
 
