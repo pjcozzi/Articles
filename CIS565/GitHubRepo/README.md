@@ -120,11 +120,28 @@ A great example is [WebGL Interactive Water](http://dblsai.github.io/WebGL-Fluid
 
 If you can't provide a live demo or you are using a WebGL extension that is not widely supported, create a video and link to it from the `README.md` (since we can't embed YouTube videos in markdown files, it can be useful to take a screenshot of the intro YouTube video and then use it as a link to your video).  Again, the video should include a link to your github repo and personal website for when people link directly to your video.  For an example, see [Surface Mesh Reconstruction from RGBD Images](https://www.youtube.com/watch?v=pg0YZ76ZZw4) by Collin Boots and Dalton Banks.
 
-### TODO: performance anaylsis
+### Performance analysis
 
-### TODO: how to build
+Our course is all about performance so each project should include detailed and insightful performance analysis.  This includes both the high-level takeaways and graphs and charts with data that supports the claims.  Include the details of the system used for performance tests, including the CPU, GPU, amount of memory, OS, and browser and version (if it is a WebGL app).
 
-### TODO: focus on what is unique
+For running performance tests, see [WebGL Profiling Tips](http://cesiumjs.org/2014/12/01/WebGL-Profiling-Tips/). For C++ apps, make sure you are using a release build.
+
+Here's some examples of projects with great performance analysis:
+
+* [Uniform grid and kd-tree in CUDA](https://github.com/jeremynewlin/Accel) by Jeremy Newlin and Danny Rerucha
+* [GPU path tracer](https://github.com/kainino0x/Project3-Pathtracer) by Kai Ninomiya
+* [CUDA Rasterizer](https://github.com/zxm5010/Project4-Rasterizer) by Zhenghan Mei
+* [Accelerated Stochastic Progressive Photon Mapping on the GPU](https://github.com/ishaan13/PhotonMapper) by Ishaan Singh, Yingting Xiao, and Xiaoyan Zhu
+
+### Build instructions
+
+Include concise instructions on how to build your project, including what software is required, e.g., CUDA drivers, Visual Studio, etc.  Make this as simple as possible and avoid the need to set environment variables, chase down third-party dependencies, etc.
+
+### Focus on what is unique
+
+Up until the final project, we will implement similar projects: path tracer, rasterizer, deferred shader, etc.  Each project provides opporunities to develop custom features.  Select these based on your strengths and interests and make sure your `README.md` highlights them.
+
+As a recruiter, I have been to many carrer fairs where every computer science student told me about the same project. Boring.  Differentiate yourself by highlighting what is unique about your work.
 
 More tips
 ---------
