@@ -30,7 +30,7 @@ Show.  Don't tell.
 
 Use screenshots with captions to build up the features in your project.  For example, see:
 
-* [Interactive Real-Time WebGL Fluid](https://github.com/dblsai/WebGL-Fluid) by Binglu Du and Xingjie Ma
+* [WebGL Interactive Water](https://github.com/dblsai/WebGL-Fluid) by Binglu Du and Xingjie Ma
 
 Each feature is highlighted with a screenshot (animated gifs actually work quite well for this project).  Scroll down more to the `Water Simulation` section where they introduce the components of the fluid simulation with screenshots starting with just the height map and then building up to object interaction with the surface.
 
@@ -102,11 +102,27 @@ Again, to help a broad audience, Wei-Chien included some details and a screensho
 
 ![](Figures/dof.png)
 
-### TODO: bloopers
+### Bloopers
 
-### TODO: videos and demos, link back.
+We all make mistakes while developing.  If a bug results in an interesting image, feel free to share it in a bloopers section with a description of what was wrong.  For example, see [I Get Your Fail](http://igetyourfail.blogspot.com/).
+
+### Demos and Videos
+
+If your project uses WebGL, host it using [GitHub Pages](https://pages.github.com/) and have a prominent link to it in your `README.md`.  The representitive image can also link to it.  Make sure your demo:
+
+* Has a link back to your github repo since people might link directly to your demo.
+* Has your name and a link to your website.
+* Includes instructions on how to interactive with it.
+* Fails gracefully if WebGL or any required extensions are not supported.
+* Has a UI to tweak parameters and show debug views
+
+A great example is [WebGL Interactive Water](http://dblsai.github.io/WebGL-Fluid/) by Binglu Du and Xingjie Ma
+
+If you can't provide a live demo or you are using a WebGL extension that is not widely supported, create a video and link to it from the `README.md` (since we can't embed YouTube videos in markdown files, it can be useful to take a screenshot of the intro YouTube video and then use it as a link to your video).  Again, the video should include a link to your github repo and personal website for when people link directly to your video.  For an example, see [Surface Mesh Reconstruction from RGBD Images](https://www.youtube.com/watch?v=pg0YZ76ZZw4) by Collin Boots and Dalton Banks.
 
 ### TODO: performance anaylsis
+
+### TODO: how to build
 
 ### TODO: focus on what is unique
 
