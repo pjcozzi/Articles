@@ -46,15 +46,43 @@ In addition to screenshots that break down each feature, it is illustrative to a
 
 I know the caustics and Fresnel are obvious to you, but they are not obvious to everyone.
 
-### TODO: debug views
+### Debug screenshots
+
+Debug views are useful for development, but are also _really useful_ to help explain how your project works.  A few good examples are:
+
+* [GPU Ray Tracer](https://github.com/cboots/Project1-RayTracer) by Collin Boots
+* [Deferred Shader](https://github.com/otaku690/GLSLDeferredShading) by Cheng-Tso Lin
+* [Uniform grid and kd-tree in CUDA](https://github.com/jeremynewlin/Accel) by Jeremy Newlin and Danny Rerucha
+
+In Collin's ray tracer, the following screenshots show distance to the closest surface, normals, and oversampling.
+
+![](Figures/raydebug0.png)
+![](Figures/raydebug1.png)
+![](Figures/raydebug2.png)
+
+For a deferred shader, it is insightful to show each g-buffer like, for example, the depth and normal buffers in Cheng's deferred shader:
+
+![](Figures/deferreddebug0.jpg)
+![](Figures/deferreddebug1.jpg)
+
+For some projects, the only visual output will be debug views.  For example, in Jeremy and Danny's spatial data structure project, this screenshot shows nearest neighbor search.
+
+![](Figures/nearest.png)
 
 ### Side-by-side comparisions
 
-It is instructive to highlight features by showing side-by-side screenshots, one with the feature and one without.  A good example is:
+It is instructive to highlight features by showing side-by-side screenshots, one with the feature and one without.  Some good examples are:
 
+* [Deferred Shader](https://github.com/cboots/Deferred-Shading) by Collin Boots
 * [GPU Path Tracer](https://github.com/foxking0416/Project3-Pathtracer) by Wei-Chien Tu
 
-Here's the anti-aliasing screenshot:
+Here's the bump maping screenshots in the deferred shader.  The first screenshot shows the bump map itself, the second is the surface shaded without the bump map, and the third is the surface shaded with the bump map clearly showing the additional detail.
+
+![](Figures/bump0.png)
+![](Figures/bump1.png)
+![](Figures/bump2.png)
+
+Here's the anti-aliasing in the path tracer screenshot:
 
 ![](Figures/aa2.png)
 
