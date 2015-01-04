@@ -30,6 +30,24 @@ Use screenshots with captions to build up the features in your project.  For exa
 
 Each feature is highlighted with a screenshot (animated gifs actually work quite well for this project).  Scroll down more to the `Water Simulation` section where they introduce the components of the fluid simulation starting with just the height map and then building up to object interaction with the surface.
 
+### Annotate
+
+In additional to screenshots that break down each feature, it is illustrative to annoate a representitive image, perhaps even _the_ representitive image point out each feature like Kai Ninomiya did in his [GPU path tracer](https://github.com/kainino0x/Project3-Pathtracer):
+
+![](Figures/annotated.jpg)
+
+I know the caustics and Fresnel are obvious to you, but they are not obvious to everyone.
+
+### TODO: comparision
+
+### TODO: debug views
+
+### TODO: bloopers
+
+### TODO: videos and demos, link back.
+
+### TODO: performance anaylsis
+
 More tips
 ---------
 
