@@ -34,9 +34,9 @@ Use screenshots with captions to build up the features in your project.  For exa
 
 * [WebGL Interactive Water](https://github.com/dblsai/WebGL-Fluid) by Binglu Du and Xingjie Ma
 
-Each feature is highlighted with a screenshot (animated gifs actually work quite well for this project).  Scroll down to the `Water Simulationn` section where they introduce the components of the fluid simulation with screenshots starting with just the height map and then building up to object interaction.
+In this project, each feature is highlighted with a screenshot (animated gifs actually work quite well here).  Scroll down to the `Water Simulationn` section where they introduce the components of the fluid simulation with screenshots starting with just the height map and then building up to object interaction.
 
-The representative image for [Surface Mesh Reconstruction from RGBD Images](https://github.com/cboots/RGBD-to-Mesh) also nicely builds up its features:
+The representative image for [Surface Mesh Reconstruction from RGBD Images](https://github.com/cboots/RGBD-to-Mesh) also nicely builds up its features and pipeline:
 
 ![](Figures/rgbd-to-mesh.png)
 
@@ -50,7 +50,7 @@ I know the caustics and Fresnel are obvious to you, but they are not obvious to 
 
 ### Debug screenshots
 
-Debug views are useful while developing, but are also _really useful_ to explain how your project works.  A few good examples are:
+Debug views are useful while developing, but they are also _really useful_ to explain how your project works.  A few good examples are:
 
 * [GPU Ray Tracer](https://github.com/cboots/Project1-RayTracer) by Collin Boots
 * [Deferred Shader](https://github.com/otaku690/GLSLDeferredShading) by Cheng-Tso Lin
@@ -67,7 +67,7 @@ For a deferred shader, it is insightful to show each g-buffer like, for example,
 ![](Figures/deferreddebug0.jpg)
 ![](Figures/deferreddebug1.jpg)
 
-For some projects, the only visual output will be debug views.  In Jeremy and Danny's spatial data structure project, this screenshot shows nearest neighbor search.
+For some projects, the only visual output will be debug views.  In Jeremy and Danny's spatial data structure project, this screenshot shows nearest neighbor search:
 
 ![](Figures/nearest.png)
 
@@ -78,25 +78,26 @@ It is instructive to highlight features by showing side-by-side screenshots, one
 * [Deferred Shader](https://github.com/cboots/Deferred-Shading) by Collin Boots
 * [GPU Path Tracer](https://github.com/foxking0416/Project3-Pathtracer) by Wei-Chien Tu
 
-Here's the bump mapping screenshots in the deferred shader:
+Here's the bump mapping screenshots in Collin's deferred shader:
 
 ![](Figures/bump0.png)
+
 ![](Figures/bump1.png)
 ![](Figures/bump2.png)
 
 The first screenshot shows the bump map itself, the second is the surface shaded without the bump map, and the third is the surface shaded with the bump map clearly showing the additional detail.
 
-Here's the anti-aliasing in the path tracer screenshot:
+Here's the anti-aliasing screenshot in Wei-Chien's path tracer:
 
 ![](Figures/aa2.png)
 
-Wei-Chien also includes an image that cleanly highlights the implementation:
+Wei-Chien also included a description and image that presents the implementation:
 
 ![](Figures/aa.png)
 
 Recall that your audience is not me nor is it the teaching assistant; it is technical hiring managers and developers.  Therefore, it is useful to target a broad audience.
 
-Similar to side-by-side comparisons, it is also instructive to tweak key parameters and take multiple screenshots to show the effect of the parameter.  For example, here are two screenshots showing depth-of-field in Wei-Chien's path tracer.  Both have a focal length of 10.  The first has an aperture radius of 0.2; the second is 0.5.  Note the clear difference in the area out of focus.
+Similar to side-by-side feature comparisons, it is also instructive to tweak key parameters and take multiple screenshots to show the effect of the parameter.  For example, here are two screenshots showing depth-of-field in Wei-Chien's path tracer.  Both have a focal length of 10.  The first has an aperture radius of 0.2; the second is 0.5.  Note the clear difference in the area out of focus.
 
 ![](Figures/radius02.png)
 
@@ -108,25 +109,25 @@ To help a broad audience, Wei-Chien also included some details and a screenshot 
 
 ### Bloopers
 
-We all make mistakes while coding.  If a bug results in an interesting image, feel free to share it in a bloopers section with a description of what was wrong.  For example, see [I Get Your Fail](http://igetyourfail.blogspot.com/).
+We all make mistakes while coding.  If a bug results in an interesting image, feel free to share it in a bloopers section with a description of what was wrong.  For examples, see [I Get Your Fail](http://igetyourfail.blogspot.com/).
 
-### Demos and Videos
+### Demos and videos
 
 If your project uses WebGL, host it using [GitHub Pages](https://pages.github.com/) and have a prominent link to it in your `README.md`.  The representative image can also link to it.  Make sure your demo:
 
 * Has a link back to your github repo since people might link directly to your demo.
 * Has your name and a link to your website.
-* Includes instructions on how to interactive with it.
+* Includes instructions on how to use it.
 * Fails gracefully if WebGL or any required extensions are not supported.
-* Has a UI to tweak parameters and show debug views
+* Has a UI to tweak parameters and show debug views (use [dat.GUI](https://code.google.com/p/dat-gui/)).
 
-A great example is [WebGL Interactive Water](http://dblsai.github.io/WebGL-Fluid/) by Binglu Du and Xingjie Ma.
+A great example is [WebGL Interactive Water](http://dblsai.github.io/WebGL-Fluid/).
 
-If you can't provide a live demo or you are using a WebGL extension that is not widely supported, create a video and link to it from the `README.md` (since we can't embed YouTube videos in markdown files, it can be useful to take a screenshot of the YouTube video before it is played and then use it as a link to your video).  Like the demo, the video should include a link to your github repo and personal website for when people link directly to your video.  For an example, see [Surface Mesh Reconstruction from RGBD Images](https://www.youtube.com/watch?v=pg0YZ76ZZw4) by Collin Boots and Dalton Banks.
+If you can't provide a live demo or you are using a WebGL extension that is not widely supported, create a video and link to it from the `README.md` (since we can't embed YouTube videos in markdown files, it can be useful to take a screenshot of the YouTube video before it starts and then use it as a link to your video).  Like the demo, the video should include a link to your github repo and personal website for when people link directly to your video.  For an example, see [Surface Mesh Reconstruction from RGBD Images](https://www.youtube.com/watch?v=pg0YZ76ZZw4).
 
 ### Performance analysis
 
-Our course is all about performance so each project should include detailed and insightful performance analysis.  This includes both the high-level takeaways and graphs and charts with data that supports the claims.  Include the details of the system used for performance tests, including the CPU, GPU, amount of memory, OS, and browser and version (if it is a WebGL app).
+Our course is all about performance so each project should include detailed and insightful performance analysis.  This includes both the high-level takeaways and graphs and charts with data supporting the claims.  Include the details of the system used for performance tests, including the CPU, GPU, amount of memory, OS, and browser and version (if it is a WebGL app).
 
 For running performance tests, see [WebGL Profiling Tips](http://cesiumjs.org/2014/12/01/WebGL-Profiling-Tips/). For C++ apps, make sure you are using a release build.
 
