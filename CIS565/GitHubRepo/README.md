@@ -36,7 +36,7 @@ Each feature is highlighted with a screenshot (animated gifs actually work quite
 
 The representitive image for [Surface Mesh Reconstruction from RGBD Images](https://github.com/cboots/RGBD-to-Mesh) also nicely builds up its features:
 
-![rgbd-to-mesh.png]()
+![](Figures/rgbd-to-mesh.png)
 
 ### Annotate
 
