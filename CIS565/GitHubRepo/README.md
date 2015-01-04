@@ -20,7 +20,7 @@ The `README.md` should start with a title, followed by your name (with a link to
    
 Here's the photon mapping image:
 
-![](photonmapping.png)
+![](Figures/photonmapping.png)
 
 The image should be representitive in that it highlights the breadth and depth of your work.  It should be your favorite showpiece.  Make sure the resolution is reasonable so it downloads quickly.
 
