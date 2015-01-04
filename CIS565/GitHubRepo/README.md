@@ -34,6 +34,10 @@ Use screenshots with captions to build up the features in your project.  For exa
 
 Each feature is highlighted with a screenshot (animated gifs actually work quite well for this project).  Scroll down more to the `Water Simulation` section where they introduce the components of the fluid simulation starting with just the height map and then building up to object interaction with the surface.
 
+The representitive image for [Surface Mesh Reconstruction from RGBD Images](https://github.com/cboots/RGBD-to-Mesh) also nicely builds up its features:
+
+![rgbd-to-mesh.png]()
+
 ### Annotate
 
 In additional to screenshots that break down each feature, it is illustrative to annoate a representitive image, perhaps even _the_ representitive image point out each feature like Kai Ninomiya did in his [GPU path tracer](https://github.com/kainino0x/Project3-Pathtracer):
