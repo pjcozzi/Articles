@@ -56,6 +56,8 @@ I know the caustics and Fresnel are obvious to you, but they are not obvious to 
 
 ### TODO: performance anaylsis
 
+### TODO: focus on what is unique
+
 More tips
 ---------
 
