@@ -62,7 +62,7 @@ In Collin's ray tracer, the following screenshots show distance to the closest s
 ![](Figures/raydebug1.png)
 ![](Figures/raydebug2.png)
 
-For a deferred shader, it is insightful to show each g-buffer like, for example, the depth and normal buffers in Cheng's deferred shader:
+For a deferred shader, it is insightful to show each texture in the g-buffer like, for example, the depth and normal buffers in Cheng's deferred shader:
 
 ![](Figures/deferreddebug0.jpg)
 ![](Figures/deferreddebug1.jpg)
@@ -156,4 +156,4 @@ More tips
 ---------
 
 * Feel free to rename your fork of the starter-code repo.  For example, just because we named a repo `Project6-DeferredShader`, doesn't mean you have to.  Likewise, feel free to edit the description at the top of the repo page.
-* Don't clutter the root directory with too many files because it will force visitors to have to scroll a lot to get to your `README.md`.
+* Don't clutter the root directory with many files because it will force visitors to have to scroll a lot to get to your `README.md`.
