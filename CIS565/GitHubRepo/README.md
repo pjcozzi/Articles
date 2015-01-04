@@ -12,7 +12,7 @@ Do not keep the original `README.md` with our project instructions.  Instead, co
 
 ### Representitive Image
 
-The `README.md` should start with a title, followed by your name (with a link to your website, twitter, blog, etc.), and then a representitive image of your work.  Including a image like this has been tradition in SIGGRAPH and many other graphics venues for years.  Here's some good examples:
+The `README.md` should start with a title, followed by your name (with a link to your website, twitter, blog, etc.), and then a representitive image of your work.  Including an image like this has been tradition in SIGGRAPH and many other graphics venues for years.  Here's some good examples:
 
    * [GPU-Accelerated Dynamic Fracture in the Browser](https://github.com/kainino0x/cis565final) by Jiatong He and Kai Ninomiya
    * [Surface Mesh Reconstruction from RGBD Images](https://github.com/cboots/RGBD-to-Mesh) by Collin Boots and Dalton Banks
