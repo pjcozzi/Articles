@@ -3,7 +3,7 @@ How to make an attractive GitHub repo
 
 A guide for [CIS 565](http://www.seas.upenn.edu/~cis565/) students by [Patrick Cozzi](http://www.seas.upenn.edu/~pcozzi/).
 
-Last updated: January 4, 2015
+Last updated: September 11, 2016
 
 A good README.md
 ----------------
@@ -124,6 +124,12 @@ If your project uses WebGL, host it using [GitHub Pages](https://pages.github.co
 A great example is [WebGL Interactive Water](http://dblsai.github.io/WebGL-Fluid/).
 
 If you can't provide a live demo or you are using a WebGL extension that is not widely supported, create a video and link to it from the `README.md` (since we can't embed YouTube videos in markdown files, it can be useful to take a screenshot of the YouTube video before it starts and then use it as a link to your video).  Like the demo, the video should include a link to your github repo and personal website for when people link directly to your video.  For an example, see [Surface Mesh Reconstruction from RGBD Images](https://www.youtube.com/watch?v=pg0YZ76ZZw4).
+
+#### Animated gifs
+
+Animated gifs were hot in the 1990's and they have made a come back!  Since we can't embed YouTube videos in markdown, another alternative is to create an animated gif using [LICEcap](http://www.cockos.com/licecap/), which is very easy to use.  Here's an example from [Baking Ambient Occlusion in the glTF Pipeline](http://cesiumjs.org/2016/08/08/ambient-occlusion/):
+
+![](http://cesiumjs.org/images/blogs/IntroducingAmbientOcclusion/day-and-night.gif)
 
 ### Performance analysis
 
