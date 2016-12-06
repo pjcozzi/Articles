@@ -1,6 +1,6 @@
 # How to Implement Graphics Research
 
-The [Penn graphics students](http://cg.cis.upenn.edu/index.html) I work with on MS thesis, senior design, or [GPU course](http://www.seas.upenn.edu/~cis565/) projects and my colleagues working on [Cesium](http://cesiumjs.org/) are all implementing fairly recent graphics research.
+The [Penn graphics students](http://cg.cis.upenn.edu/index.html) I work with on MS thesis, senior design, and [GPU course](http://www.seas.upenn.edu/~cis565/) projects and my colleagues working on [Cesium](http://cesiumjs.org/) are all implementing fairly recent graphics research.
 
 This article presents tips for implementing research that I have learned through hands-on development and through mentoring students and practitioners.  There seems to be a huge difference in productivity depending how how we navigate papers and how we approach implementing them.
 
@@ -24,15 +24,15 @@ Quickly identifying and avoiding irrelevant papers is key to staying focused in 
 
 Assuming I have some understanding of the topic, it takes me about three hours to review an eight-page paper submission for a conference or journal.
 
-When I'm not reviewing for a committee, and instead looking for papers on a particular topic, I don't read a paper that carefully on the first pass.  When I first started reading papers, I spent too much time reading papers that were tangents.  This lead to a lot of wasted time going down dead-end paths.
+When I'm not reviewing for a committee, and instead looking for papers on a particular topic, I don't read a paper that carefully on the first pass.  When I first started reading papers, I spent too much time reading papers that were tangential.  This lead to a lot of wasted time going down dead-end paths.
 
-Instead, I suggest reviewing the figures and reading the Abstract, Introduction, and Results sections before dedicating time to a complete read.  Also check out the video or demo if available.  You may quickly find that the approach won't work for you because, for example, it is not fast enough for real-time, relies on features not supported by your target graphics API, relies on an expensive preprocess step, etc.  With that said, reading tangent papers, if you have the time, still generates potentially useful ideas.
+Instead, I suggest reviewing the figures and reading the Abstract, Introduction, and Results sections before dedicating time to a complete read.  Also check out the video or demo if available.  You may quickly find that the approach won't work for you because, for example, it is not fast enough for real-time, relies on features not supported by your target graphics API, relies on an expensive preprocess step, etc.  With that said, reading related though tangential papers, if you have the time, still generates potentially useful ideas.
 
 ### Understand the previous work
 
-If the paper appears relevant, but I don't have the background to fully understand it, I try to find the seminal work reference in the Previous Work section, and then read it.  Google Scholar can help here since it will report how many times a paper was cited, a useful measure but not ground truth.  If you follow the preview work far enough, you may end up with a paper written in the 1970s or 80s, which are fun to read for their simplicity (by today's standards) and influence.  For example, enjoy [Particle Systems - A Technique for Modeling a Class of Fuzzy Objects](https://www.lri.fr/~mbl/ENS/IG2/devoir2/files/docs/fuzzyParticles.pdf), 1983, by William Reeves.
+If the paper appears relevant, but I don't have the background to fully understand it, I try to find the seminal work reference in the Previous Work section and read it.  Google Scholar can help here since it will report how many times a paper was cited, a useful measure but not ground truth.  If you follow the preview work far enough, you may end up with a paper written in the 1970s or 80s, which are fun to read for their simplicity (by today's standards) and influence.  For example, enjoy [Particle Systems - A Technique for Modeling a Class of Fuzzy Objects](https://www.lri.fr/~mbl/ENS/IG2/devoir2/files/docs/fuzzyParticles.pdf), 1983, by William Reeves.
 
-Survey papers and the Previous Work chapters in PhD/MS theses are also great places to look for background.  They are more concise than the full papers and are often good at distilling a core idea down into a paragraph or two.  For example, [A Developer's Survey of Polygonal Simplification Algorithms](http://www.cs.virginia.edu/~luebke/publications/pdf/cg+a.2001.pdf) (2001, David Luebke) and [Technical Strategies for Massive Model Visualization](http://sglab.kaist.ac.kr/~sungeui/paper/spm08_symp.pdf) (2008, Enrico Gobbetti, Dave Kasik, and Sung eui Yoon) lead to the bulk of the work I read for my MS thesis.
+Survey papers and the Previous Work chapters in PhD/MS theses are also great places to look for background.  They distill down each relevant paper to its essence and give a framework for the subject.  For example, [A Developer's Survey of Polygonal Simplification Algorithms](http://www.cs.virginia.edu/~luebke/publications/pdf/cg+a.2001.pdf) (2001, David Luebke) and [Technical Strategies for Massive Model Visualization](http://sglab.kaist.ac.kr/~sungeui/paper/spm08_symp.pdf) (2008, Enrico Gobbetti, Dave Kasik, and Sung eui Yoon) lead to the bulk of the work I read for my MS thesis.
 
 ### Iterate
 
@@ -40,7 +40,7 @@ Once I've found a paper that I think I want to implement, I often need to read i
 
 I interleave reading with implementation.  Reading deepens my understanding to help me code, and coding deepens my understanding to help me read.
 
-If you have the luxury of no other outside work, you might start the morning coding without even checking email, then check email after lunch, and then spend the afternoon reading so you have fresh ideas for coding the next morning.  You'll quickly have more ideas than time.  Choose carefully and keep a backlog.  Often, when I go back at look at a backlog, I am happy that I didn't spend time on many of the ideas that, in retrospect, would not have been as impactful.
+If you have the luxury of no other outside work, you might start the morning coding without even checking email, then check email after lunch, and then spend the afternoon reading so you have fresh ideas for coding the next morning.  You'll quickly have more ideas than time.  Choose carefully and keep a record of those not yet examined.  Often, when I go back at look at my notes, I am happy that I didn't spend time on many of the ideas that, in retrospect, would not have been as impactful.
 
 ### Reach out
 
@@ -66,13 +66,13 @@ At the start, take the time to add code to report key statistics about the algor
 
 For example, in the out-of-core spatial data structures we use for streaming massive 3D models, we track the number of nodes in memory, nodes visited, nodes renderer, number of pending network requests, number of received requests that are processing, etc.
 
-Watching these stats gives us a very quick indicator if things are working properly.  When I wrote the cache replacement algorithm to unload nodes from memory, I first added the relevant stats reporting so I could monitor them during development.  I also started with a super simple test case of cache size of 1 or 2 tiles.
+Watching these stats gives us a very quick indicator if things are working properly.  When I wrote the cache replacement algorithm to unload nodes from memory, I first added the relevant stats reporting so I could monitor them during development.  I also started with a super-simple test case with a cache size of 1 or 2 tiles.
 
 ### Test parameters
 
 Also at the start, make it simple to tune key parameters.  If your using JavaScript, [dat.GUI](https://github.com/dataarts/dat.gui#datgui) makes it really easy to map a UI to variables.
 
-Tuning parameters is great for understanding an algorithm, testing our implementations robustness, and performance testing, e.g., quickly seeing how changing the number of dynamic lights impacts a deferred shading engine.
+Tuning parameters is great for understanding an algorithm, testing our implementation's robustness, and performance testing, e.g., quickly seeing how changing the number of dynamic lights impacts a deferred shading engine.
 
 <p align="center">
 <img src="figures/deferred.jpg" /><br/>
@@ -81,7 +81,7 @@ Tuning parameters is great for understanding an algorithm, testing our implement
 
 ### Visualize everything
 
-As graphics developers, we love to see the results of our code.  It is equally implement to visualize useful debugging aids that can yield deeper insights and intuition, such as:
+As graphics developers, we love to see the results of our code.  Debugging aids that visualize results are just as enjoyable, and can yield deeper insights and intuition. Some examples:
 * bounding volumes
 * wireframe
 * g-buffers in a deferred shader
@@ -101,7 +101,7 @@ Left: Grand Canyon. Right: Wireframe showing skirts used to avoid cracks between
 Left: View of Crater Lake (186 draw calls). Right: Freeze frame viewing tiles with their tile coordinates from a different perspective.  Images from <a href="http://cesiumjs.org/2015/05/26/Graphics-Tech-in-Cesium-Stack/">Graphics Tech in Cesium - The Graphics Stack</a>.
 </p>
 
-Sometimes a debugging tool like [Renderdoc](https://renderdoc.org/builds) or [WebGL Inspector](https://benvanik.github.io/WebGL-Inspector/) is enough to review buffers, textures, shaders, etc.  More often, I find a higher-level engine-specific tool to be more impactful, and its development always pays for itself in fewer bugs, deeper performance insights, and creating screenshots for documentation and even twitter.
+Sometimes a debugging tool such as [Renderdoc](https://renderdoc.org/builds) or [WebGL Inspector](https://benvanik.github.io/WebGL-Inspector/) is enough to review buffers, textures, shaders, etc.  More often, I find a higher-level engine-specific tool to be more useful, and its development always pays for itself in fewer bugs, deeper performance insights, and creating screenshots for documentation and even twitter.
 
 Debug visualizations are useful because when we can visualize something, an insight often becomes obvious.  For example, look at how bad bounding spheres for Cesium's terrain tiles are [compared to oriented bounding boxes](http://cesiumjs.org/2015/06/24/Oriented-Bounding-Boxes/).
 
