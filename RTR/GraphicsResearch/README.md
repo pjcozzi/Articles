@@ -1,4 +1,4 @@
-# How to Implement Graphics Research
+# Moving Graphics Research into Development
 
 The [Penn graphics students](http://cg.cis.upenn.edu/index.html) I work with on MS thesis, senior design, and [GPU course](http://www.seas.upenn.edu/~cis565/) projects and my colleagues working on [Cesium](http://cesiumjs.org/) are all implementing fairly recent graphics research.
 
@@ -54,7 +54,7 @@ The following advice applies to coding in general, but I think it is particularl
 
 Don't implement the whole paper at once.  Implement the smallest useful - or even not so useful - feature, verify that it works, and build on it, verifying the results each step of the way.  Get something working first, then make it fast and robust.
 
-Verify, verify, verify.  Double check the code flow in the debugger, measure the performance early, and test with super simple scenarios before complex ones.  When the students in our GPU course implement a rasterizer, they start with a triangle model, then a box, and then the COLLADA duck.
+Verify, verify, verify.  Double check the code flow in the debugger, measure the performance early, and test with super simple scenarios before complex ones.  When the students in our GPU course implement a rasterizer, they start with a triangle model, then a box, and then the [COLLADA duck](https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/1.0/Duck#duck).
 
 Implementing an out-of-core spatial data structure?  Start with an in-core one.  Implementing a complex GPU algorithm?  Perhaps starting with a CPU implementation first is useful and gives us something to benchmark against.
 
@@ -101,7 +101,7 @@ Left: Grand Canyon. Right: Wireframe showing skirts used to avoid cracks between
 Left: View of Crater Lake (186 draw calls). Right: Freeze frame viewing tiles with their tile coordinates from a different perspective.  Images from <a href="http://cesiumjs.org/2015/05/26/Graphics-Tech-in-Cesium-Stack/">Graphics Tech in Cesium - The Graphics Stack</a>.
 </p>
 
-Sometimes a debugging tool such as [Renderdoc](https://renderdoc.org/builds) or [WebGL Inspector](https://benvanik.github.io/WebGL-Inspector/) is enough to review buffers, textures, shaders, etc.  More often, I find a higher-level engine-specific tool to be more useful, and its development always pays for itself in fewer bugs, deeper performance insights, and creating screenshots for documentation and even twitter.
+Sometimes a graphics API debugging tool such as [Renderdoc](https://renderdoc.org/builds) or [WebGL Inspector](https://benvanik.github.io/WebGL-Inspector/) is enough to review buffers, textures, shaders, etc.  I also find engine-specific tools useful since they are higher-level, e.g., the may color objects based on a shadow map cascade as opposed to a graphics API tool, which may just show the shadow-map textures.  These tools development always pays for itself in fewer bugs, deeper performance insights, and creating screenshots for documentation and even twitter.
 
 Debug visualizations are useful because when we can visualize something, an insight often becomes obvious.  For example, look at how bad bounding spheres for Cesium's terrain tiles are [compared to oriented bounding boxes](http://cesiumjs.org/2015/06/24/Oriented-Bounding-Boxes/).
 
