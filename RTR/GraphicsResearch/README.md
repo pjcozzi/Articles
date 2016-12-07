@@ -26,7 +26,7 @@ Assuming I have some understanding of the topic, it takes me about three hours t
 
 When I'm not reviewing for a committee, and instead looking for papers on a particular topic, I don't read a paper that carefully on the first pass.  When I first started reading papers, I spent too much time reading papers that were tangential.  This lead to a lot of wasted time going down dead-end paths.
 
-Instead, I suggest reviewing the figures and reading the Abstract, Introduction, and Results sections before dedicating time to a complete read.  Also check out the video or demo if available.  You may quickly find that the approach won't work for you because, for example, it is not fast enough for real-time, relies on features not supported by your target graphics API, relies on an expensive preprocess step, etc.  With that said, reading related though tangential papers, if you have the time, still generates potentially useful ideas.
+Instead, I suggest reviewing the figures and reading the Abstract, Introduction, and Results sections before dedicating time to a complete read.  Also check out the video, demo, and **source code** if available.  You may quickly find that the approach won't work for you because, for example, it is not fast enough for real-time, relies on features not supported by your target graphics API, relies on an expensive preprocess step, etc.  With that said, reading related though tangential papers, if you have the time, still generates potentially useful ideas.
 
 ### Understand the previous work
 
@@ -54,7 +54,7 @@ The following advice applies to coding in general, but I think it is particularl
 
 Don't implement the whole paper at once.  Implement the smallest useful - or even not so useful - feature, verify that it works, and build on it, verifying the results each step of the way.  Get something working first, then make it fast and robust.
 
-Verify, verify, verify.  Double check the code flow in the debugger, measure the performance early, and test with super simple scenarios before complex ones.  When the students in our GPU course implement a rasterizer, they start with a triangle model, then a box, and then the [COLLADA duck](https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/1.0/Duck#duck).
+Verify, verify, verify.  Double check the code flow in the debugger, measure the performance early, and test with simple scenarios before complex ones.  When the students in our GPU course implement a rasterizer, they start with a triangle model, then a box, and then the [COLLADA duck](https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/1.0/Duck#duck).
 
 Implementing an out-of-core spatial data structure?  Start with an in-core one.  Implementing a complex GPU algorithm?  Perhaps starting with a CPU implementation first is useful and gives us something to benchmark against.
 
@@ -64,7 +64,7 @@ As the code starts to stabilize, add unit tests.  For this type of work, I don't
 
 At the start, take the time to add code to report key statistics about the algorithm.
 
-For example, in the out-of-core spatial data structures we use for streaming massive 3D models, we track the number of nodes in memory, nodes visited, nodes renderer, number of pending network requests, number of received requests that are processing, etc.
+For example, in the out-of-core spatial data structures we use for streaming massive 3D models, we track the number of nodes in memory, nodes visited, nodes rendered, number of pending network requests, number of received requests that are processing, etc.
 
 Watching these stats gives us a very quick indicator if things are working properly.  When I wrote the cache replacement algorithm to unload nodes from memory, I first added the relevant stats reporting so I could monitor them during development.  I also started with a super-simple test case with a cache size of 1 or 2 tiles.
 
